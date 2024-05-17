@@ -233,6 +233,7 @@ public class DataCriteriaService extends CqlTooling {
   DataElementDescriptor getCriteriaType(String dataType) {
     return QdmDatatypeUtil.isValidNegation(dataType)
         ? QdmDatatypeUtil.getDescriptorForNegation(dataType)
-        : new DataElementDescriptor(dataType.replace(",", "").replace(" ", "").replace("Not", ""), dataType);
+        : new DataElementDescriptor(
+            dataType.replace(",", "").replace(" ", "").replace("Not", ""), dataType);
   }
 }
