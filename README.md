@@ -1,4 +1,4 @@
-# cql-elm-translation
+# madie-fhir-elm-translation
 
 This is a Springboot application to translate CQL to ELM.
 

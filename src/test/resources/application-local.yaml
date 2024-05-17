@@ -6,7 +6,7 @@ logging:
   level:
     root: DEBUG
   file:
-    name: cql-elm-translation.log
+    name: madie-fhir-elm-translation.log
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
     file: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %mdc %logger{36}.%M - %msg%n"
