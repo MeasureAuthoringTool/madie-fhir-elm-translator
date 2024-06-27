@@ -14,7 +14,8 @@
   <description>Translates CQL to ELM for MADiE</description>
 
   <properties>
-    <cqframework.version>3.3.2</cqframework.version>
+    <cqframework.version>3.11.0</cqframework.version>
+    <jackson.version>2.17.1</jackson.version>
     <java.version>17</java.version>
     <mvn.checkstyle.file>madie-checkstyle.xml</mvn.checkstyle.file>
     <mvn.checkstyle.version>3.1.2</mvn.checkstyle.version>
@@ -25,24 +26,40 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.fhir</groupId>
       <artifactId>ucum</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.8</version>
     </dependency>
     <!-- JAXB API only -->
 
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>org.eclipse.persistence.moxy</artifactId>
-      <version>2.6.8</version>
+      <version>4.0.2</version>
     </dependency>
 
     <!-- END JAXB API only -->
 
     <dependency>
-      <groupId>org.jvnet.jaxb2_commons</groupId>
+      <groupId>codes.rafael.jaxb2_commons</groupId>
       <artifactId>jaxb2-basics-runtime</artifactId>
-      <version>0.13.1</version>
+      <version>3.0.0</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
@@ -117,6 +134,20 @@
       <groupId>info.cqframework</groupId>
       <artifactId>cql-to-elm</artifactId>
       <version>${cqframework.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>jackson-core</artifactId>
+          <groupId>com.fasterxml.jackson.core</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jackson-databind</artifactId>
+          <groupId>com.fasterxml.jackson.core</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jackson-annotations</artifactId>
+          <groupId>com.fasterxml.jackson.core</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -261,7 +292,7 @@
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>2.3.3</version>
+      <version>4.0.1</version>
     </dependency>
 
     <dependency>

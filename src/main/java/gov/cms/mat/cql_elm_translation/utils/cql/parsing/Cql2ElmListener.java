@@ -29,7 +29,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.collections4.CollectionUtils;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
-import org.cqframework.cql.cql2elm.preprocessor.CqlPreprocessorVisitor;
+import org.cqframework.cql.cql2elm.preprocessor.CqlPreprocessorElmCommonVisitor;
+import org.cqframework.cql.elm.IdObjectFactory;
 import org.cqframework.cql.gen.cqlBaseListener;
 import org.cqframework.cql.gen.cqlLexer;
 import org.cqframework.cql.gen.cqlParser;
@@ -650,10 +651,19 @@ public class Cql2ElmListener extends cqlBaseListener {
         TranslationResource.getInstance(true); // <-- BADDDDD!!!! Defaults to fhir
 
     // Add CqlCompilerOptions from LibraryManager to prevent NPE while walking through CQL
-    LibraryBuilder libraryBuilder = new LibraryBuilder(translationResource.getLibraryManager());
-    libraryBuilder.setCompilerOptions(
-        translationResource.getLibraryManager().getCqlCompilerOptions());
-    CqlPreprocessorVisitor preprocessor = new CqlPreprocessorVisitor(libraryBuilder, tokens);
+    //  The next two lines were added as a fix for the NPE while using Translator version 3.2.0..
+    // but after upgrading they have been deprecated
+    //    LibraryBuilder libraryBuilder = new
+    // LibraryBuilder(translationResource.getLibraryManager());
+    //    libraryBuilder.setCompilerOptions(
+    //        translationResource.getLibraryManager().getCqlCompilerOptions());
+
+    CqlPreprocessorElmCommonVisitor preprocessor =
+        new CqlPreprocessorElmCommonVisitor(
+            new LibraryBuilder(translationResource.getLibraryManager(), new IdObjectFactory()),
+            tokens);
+
+    // qlPreprocessorVisitor preprocessor = new CqlPreprocessorVisitor(libraryBuilder, tokens);
     preprocessor.visit(tree);
     ParseTreeWalker walker = new ParseTreeWalker();
     walker.walk(listener, tree);

@@ -17,7 +17,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
-import org.cqframework.cql.cql2elm.preprocessor.CqlPreprocessorVisitor;
+import org.cqframework.cql.cql2elm.preprocessor.CqlPreprocessorElmCommonVisitor;
+import org.cqframework.cql.elm.IdObjectFactory;
 import org.cqframework.cql.gen.cqlLexer;
 import org.cqframework.cql.gen.cqlParser;
 import org.hl7.elm.r1.ExpressionDef;
@@ -131,9 +132,10 @@ public class CQLTools {
         TranslationResource.getInstance(
             usingProperties.getLibraryType() == "FHIR"); // <-- BADDDDD!!!! Defaults to fhir
 
-    CqlPreprocessorVisitor preprocessor =
-        new CqlPreprocessorVisitor(
-            new LibraryBuilder(translationResource.getLibraryManager()), tokens);
+    CqlPreprocessorElmCommonVisitor preprocessor =
+        new CqlPreprocessorElmCommonVisitor(
+            new LibraryBuilder(translationResource.getLibraryManager(), new IdObjectFactory()),
+            tokens);
 
     preprocessor.visit(tree);
     ParseTreeWalker walker = new ParseTreeWalker();
