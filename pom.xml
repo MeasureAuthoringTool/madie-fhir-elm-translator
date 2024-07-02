@@ -7,11 +7,11 @@
     <version>3.2.4</version>
   </parent>
   <groupId>gov.cms.madie</groupId>
-  <artifactId>cql-elm-translation</artifactId>
+  <artifactId>fhir-elm-translation</artifactId>
   <version>0.0.2-SNAPSHOT</version>
 
-  <name>CQL to ELM Translation Service</name>
-  <description>Translates CQL to ELM for MADiE</description>
+  <name>MADiE FHIR CQL to ELM Translation Service</name>
+  <description>Translates CQL to ELM for MADiE FHIR</description>
 
   <properties>
     <cqframework.version>3.11.0</cqframework.version>

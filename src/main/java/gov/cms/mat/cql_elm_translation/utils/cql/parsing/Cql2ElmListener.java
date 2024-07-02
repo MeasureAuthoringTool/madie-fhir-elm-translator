@@ -647,8 +647,7 @@ public class Cql2ElmListener extends cqlBaseListener {
             childrenLibraries);
     ParseTree tree = parser.library();
 
-    TranslationResource translationResource =
-        TranslationResource.getInstance(true); // <-- BADDDDD!!!! Defaults to fhir
+    TranslationResource translationResource = TranslationResource.getInstance(true);
 
     // Add CqlCompilerOptions from LibraryManager to prevent NPE while walking through CQL
     //  The next two lines were added as a fix for the NPE while using Translator version 3.2.0..
