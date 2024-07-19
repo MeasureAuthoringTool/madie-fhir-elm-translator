@@ -27,6 +27,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.collections4.CollectionUtils;
+import org.cqframework.cql.cql2elm.CqlCompilerOptions;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
 import org.cqframework.cql.cql2elm.preprocessor.CqlPreprocessorVisitor;
@@ -651,8 +652,9 @@ public class Cql2ElmListener extends cqlBaseListener {
 
     // Add CqlCompilerOptions from LibraryManager to prevent NPE while walking through CQL
     LibraryBuilder libraryBuilder = new LibraryBuilder(translationResource.getLibraryManager());
-    libraryBuilder.setCompilerOptions(
-        translationResource.getLibraryManager().getCqlCompilerOptions());
+    CqlCompilerOptions options = translationResource.getLibraryManager().getCqlCompilerOptions();
+    options.setSignatureLevel(LibraryBuilder.SignatureLevel.Overloads);
+    libraryBuilder.setCompilerOptions(options);
     CqlPreprocessorVisitor preprocessor = new CqlPreprocessorVisitor(libraryBuilder, tokens);
     preprocessor.visit(tree);
     ParseTreeWalker walker = new ParseTreeWalker();

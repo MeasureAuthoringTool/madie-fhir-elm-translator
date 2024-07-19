@@ -114,7 +114,7 @@ public class TranslationResource {
       VersionedIdentifier sourceInfo) {
     try {
       UcumService ucumService = null;
-      LibraryBuilder.SignatureLevel signatureLevel = LibraryBuilder.SignatureLevel.None;
+      LibraryBuilder.SignatureLevel signatureLevel = LibraryBuilder.SignatureLevel.Overloads;
       List<CqlCompilerOptions.Options> optionsList = new ArrayList<>();
 
       for (String key : params.keySet()) {
@@ -147,6 +147,7 @@ public class TranslationResource {
       NamespaceInfo nsInfo = null;
 
       libraryManager.setUcumService(ucumService);
+      libraryManager.getCqlCompilerOptions().setSignatureLevel(signatureLevel);
       libraryManager.getCqlCompilerOptions().setOptions(options);
       CqlTranslator translator =
           CqlTranslator.fromStream(nsInfo, sourceInfo, cqlStream, libraryManager);

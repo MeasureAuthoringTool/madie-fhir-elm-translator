@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.cqframework.cql.cql2elm.CqlCompilerOptions;
 import org.cqframework.cql.cql2elm.CqlTranslator;
+import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.cqframework.cql.cql2elm.LibraryManager;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
 import org.cqframework.cql.elm.requirements.fhir.DataRequirementsProcessor;
@@ -60,6 +61,7 @@ public class EffectiveDataRequirementService {
     var dqReqTrans = new DataRequirementsProcessor();
     CqlCompilerOptions options = CqlCompilerOptions.defaultOptions();
     options.setCollapseDataRequirements(true); // removing duplicate data requirements
+    options.setSignatureLevel(LibraryBuilder.SignatureLevel.Overloads);
 
     org.hl7.fhir.r5.model.Library effectiveDataRequirements =
         dqReqTrans.gatherDataRequirements(
