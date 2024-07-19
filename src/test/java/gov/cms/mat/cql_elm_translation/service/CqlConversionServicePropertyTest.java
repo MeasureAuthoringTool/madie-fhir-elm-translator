@@ -54,26 +54,14 @@ class CqlConversionServicePropertyTest implements ResourceFileUtil {
   }
 
   @Test
-  void process_SignatureLevelNone() {
+  void process_SignatureLevelOverloads() {
     String jsonDefault = getJson();
 
-    signatureLevel = LibraryBuilder.SignatureLevel.None;
+    signatureLevel = LibraryBuilder.SignatureLevel.Overloads;
 
-    String jsonSignatureLevelNone = getJson();
+    String jsonSignatureLevel = getJson();
 
-    // NO change expected null signatureLevel and LibraryBuilder.SignatureLevel.None behave the same
-    assertEquals(jsonDefault, jsonSignatureLevelNone);
-  }
-
-  @Test
-  void process_SignatureLevelAll() {
-    String jsonDefault = getJson();
-
-    signatureLevel = LibraryBuilder.SignatureLevel.All;
-
-    String jsonSignatureLevelNone = getJson();
-
-    assertEquals(jsonDefault, jsonSignatureLevelNone); // NO change TODO not expected
+    assertEquals(jsonDefault, jsonSignatureLevel);
   }
 
   @Test
