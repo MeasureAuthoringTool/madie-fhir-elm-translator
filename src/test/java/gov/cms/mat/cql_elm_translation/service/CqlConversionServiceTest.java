@@ -82,9 +82,16 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     try {
       JsonNode jsonNode = objectMapper.readTree(resultJson);
       assertNotNull(jsonNode);
-      JsonNode libraryNode = jsonNode.at("/errorExceptions");
-      assertNotNull(libraryNode);
-      assertTrue(libraryNode.isMissingNode());
+
+      JsonNode libraryNodeEx = jsonNode.at("/errorExceptions");
+      assertNotNull(libraryNodeEx);
+      assertFalse(libraryNodeEx.isMissingNode());
+      assertThat(libraryNodeEx.isArray(), is(true));
+      assertThat(
+          libraryNodeEx.get(0).get("message").textValue(),
+          is(
+              equalTo(
+                  "FHIRHelpers is required as an included library for QI-Core. Please add the appropriate version of FHIRHelpers to your CQL.")));
     } catch (JsonProcessingException e) {
       fail(e.getMessage());
     }
@@ -134,9 +141,17 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     try {
       JsonNode jsonNode = objectMapper.readTree(resultJson);
       assertNotNull(jsonNode);
-      JsonNode libraryNode = jsonNode.at("/errorExceptions");
-      assertNotNull(libraryNode);
-      assertTrue(libraryNode.isMissingNode());
+
+      JsonNode libraryNodeEx = jsonNode.at("/errorExceptions");
+      assertNotNull(libraryNodeEx);
+      assertFalse(libraryNodeEx.isMissingNode());
+      assertThat(libraryNodeEx.isArray(), is(true));
+      assertThat(
+          libraryNodeEx.get(0).get("message").textValue(),
+          is(
+              equalTo(
+                  "FHIRHelpers is required as an included library for QI-Core. Please add the appropriate version of FHIRHelpers to your CQL.")));
+
     } catch (JsonProcessingException e) {
       fail(e.getMessage());
     }

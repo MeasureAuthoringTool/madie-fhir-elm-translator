@@ -7,6 +7,7 @@ import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.madie.cql_elm_translator.utils.cql.data.RequestData;
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import gov.cms.madie.cql_elm_translator.exceptions.InternalServerException;
+import gov.cms.mat.cql_elm_translation.exceptions.MissingLibraryCqlCompilerException;
 import gov.cms.mat.cql_elm_translation.service.filters.AnnotationErrorFilter;
 import gov.cms.mat.cql_elm_translation.service.filters.CqlTranslatorExceptionFilter;
 import gov.cms.mat.cql_elm_translation.service.support.CqlExceptionErrorProcessor;
@@ -14,6 +15,8 @@ import gov.cms.mat.cql_elm_translation.service.support.CqlExceptionErrorProcesso
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
+
+import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.CqlCompilerException;
 import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.LibraryContentType;
@@ -51,6 +54,9 @@ public class CqlConversionService extends CqlTooling {
     // Gets the translator results
     CqlTranslator cqlTranslator = processCqlData(requestData);
 
+    // QI-Core measures require FHIRHelpers...enforce this validation only for measure CQL
+    processForMissingFhirHelpersLibrary(cqlTranslator, requestData.getCqlData());
+
     List<CqlCompilerException> cqlTranslatorExceptions =
         processErrors(
             requestData.getCqlData(), requestData.isShowWarnings(), cqlTranslator.getExceptions());
@@ -84,6 +90,35 @@ public class CqlConversionService extends CqlTooling {
       }
     }
     return CqlConversionPayload.builder().json(jsonWithErrors).xml(cqlTranslator.toXml()).build();
+  }
+
+  /**
+   * MODIFIES INPUT PARAMETER Checks for FHIRHelpers library and adds an exception on the
+   * CqlTranslator object if missing. Exception is not added if the CQL is for the FHIRHelpers
+   * library itself.
+   *
+   * @param cqlTranslator
+   * @param cql
+   */
+  public void processForMissingFhirHelpersLibrary(CqlTranslator cqlTranslator, String cql) {
+    VersionedIdentifier identifier =
+        cqlTranslator.getTranslatedLibrary().getLibrary().getIdentifier();
+    if (StringUtils.isNotBlank(cql)
+        && identifier != null
+        && !identifier.getId().contains("FHIRHelpers")) {
+      Library.Includes includes = cqlTranslator.getTranslatedLibrary().getLibrary().getIncludes();
+      if (includes == null
+          || includes.getDef() == null
+          || includes.getDef().isEmpty()
+          || !includes.getDef().stream()
+              .anyMatch(includeDef -> includeDef.getPath().contains("FHIRHelpers"))) {
+        cqlTranslator
+            .getExceptions()
+            .add(
+                new MissingLibraryCqlCompilerException(
+                    "FHIRHelpers", cqlTranslator.getTranslatedLibrary().getIdentifier(), 1));
+      }
+    }
   }
 
   public TranslatedLibrary buildTranslatedLibrary(
