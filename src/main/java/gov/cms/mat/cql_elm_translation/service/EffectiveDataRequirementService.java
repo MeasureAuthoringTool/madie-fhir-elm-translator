@@ -7,14 +7,18 @@ import gov.cms.madie.cql_elm_translator.utils.cql.cql_translator.TranslationReso
 import gov.cms.madie.cql_elm_translator.utils.cql.data.RequestData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.CqlCompilerOptions;
 import org.cqframework.cql.cql2elm.CqlTranslator;
 import org.cqframework.cql.cql2elm.LibraryBuilder;
 import org.cqframework.cql.cql2elm.LibraryManager;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
 import org.cqframework.cql.elm.requirements.fhir.DataRequirementsProcessor;
+import org.hl7.elm.r1.ExpressionDef;
 import org.springframework.stereotype.Service;
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,6 +67,15 @@ public class EffectiveDataRequirementService {
     CqlCompilerOptions options = CqlCompilerOptions.defaultOptions();
     options.setCollapseDataRequirements(true); // removing duplicate data requirements
     options.setSignatureLevel(LibraryBuilder.SignatureLevel.Overloads);
+
+    // null indicates Included Library, pass all CQL Definitions to DataRequirementsProcessor
+    if (libraryDetails.getExpressions() == null) {
+      libraryDetails.setExpressions(
+          translatedLibrary.getLibrary().getStatements().getDef().stream()
+              .map(ExpressionDef::getName)
+              .filter(defName -> !StringUtils.equalsIgnoreCase(defName, "patient"))
+              .collect(Collectors.toSet()));
+    }
 
     org.hl7.fhir.r5.model.Library effectiveDataRequirements =
         dqReqTrans.gatherDataRequirements(
