@@ -14,7 +14,7 @@
   <description>Translates CQL to ELM for MADiE</description>
 
   <properties>
-    <cqframework.version>3.20.0</cqframework.version>
+    <cqframework.version>3.22.0</cqframework.version>
     <jackson.version>2.17.2</jackson.version>
     <java.version>17</java.version>
     <mvn.checkstyle.file>madie-checkstyle.xml</mvn.checkstyle.file>
