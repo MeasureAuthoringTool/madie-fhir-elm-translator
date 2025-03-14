@@ -92,7 +92,8 @@ public class DataCriteriaServiceTest implements ResourceFileUtil {
         .setUpLibrarySourceProvider(anyString(), anyString());
 
     Set<SourceDataCriteria> relevantElements =
-        dataCriteriaService.getRelevantElements(measure, token);
+        dataCriteriaService.getRelevantElements(
+            measure, token, CqlCompilerException.ErrorSeverity.Info);
 
     // source data criteria for value set
     assertThat(relevantElements.size(), is(equalTo(2)));
@@ -145,7 +146,8 @@ public class DataCriteriaServiceTest implements ResourceFileUtil {
         .setUpLibrarySourceProvider(anyString(), anyString());
 
     Set<SourceDataCriteria> sourceDataCriteria =
-        dataCriteriaService.getRelevantElements(measure, token);
+        dataCriteriaService.getRelevantElements(
+            measure, token, CqlCompilerException.ErrorSeverity.Info);
 
     assertThat(sourceDataCriteria.size(), is(equalTo(0)));
   }
@@ -156,7 +158,8 @@ public class DataCriteriaServiceTest implements ResourceFileUtil {
     Group group = Group.builder().populations(Collections.singletonList(population)).build();
     Measure measure = Measure.builder().cql("").groups(Collections.singletonList(group)).build();
     Set<SourceDataCriteria> sourceDataCriteria =
-        dataCriteriaService.getRelevantElements(measure, token);
+        dataCriteriaService.getRelevantElements(
+            measure, token, CqlCompilerException.ErrorSeverity.Info);
     assertThat(sourceDataCriteria.size(), is(equalTo(0)));
   }
 }

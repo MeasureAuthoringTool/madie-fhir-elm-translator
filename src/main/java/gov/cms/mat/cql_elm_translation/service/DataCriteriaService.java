@@ -15,6 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.cqframework.cql.cql2elm.CqlCompilerException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,7 +28,8 @@ public class DataCriteriaService extends CqlTooling {
 
   private final CqlLibraryService cqlLibraryService;
 
-  public Set<SourceDataCriteria> getRelevantElements(Measure measure, String accessToken) {
+  public Set<SourceDataCriteria> getRelevantElements(
+      Measure measure, String accessToken, CqlCompilerException.ErrorSeverity errorSeverity) {
     if (StringUtils.isBlank(measure.getCql())) {
       log.info("Data criteria not found as cql is blank");
       return Collections.emptySet();
@@ -35,7 +37,8 @@ public class DataCriteriaService extends CqlTooling {
 
     Set<String> measureDefinitions = getUsedDefinitionsFromMeasure(measure);
     CQLTools cqlTools =
-        parseCql(measure.getCql(), accessToken, cqlLibraryService, measureDefinitions);
+        parseCql(
+            measure.getCql(), accessToken, cqlLibraryService, measureDefinitions, errorSeverity);
     List<SourceDataCriteria> sourceDataCriteria = getSourceDataCriteria(cqlTools);
 
     Set<String> allUsedDefinitions = new HashSet<>(measureDefinitions);

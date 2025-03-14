@@ -31,9 +31,10 @@ public abstract class CqlTooling {
       String cql,
       String accessToken,
       CqlLibraryService cqlLibraryService,
-      Set<String> parentExpressions) {
+      Set<String> parentExpressions,
+      CqlCompilerException.ErrorSeverity errorSeverity) {
     // Run Translator to compile libraries
-    CqlTranslator cqlTranslator = runTranslator(cql, accessToken, cqlLibraryService);
+    CqlTranslator cqlTranslator = runTranslator(cql, accessToken, cqlLibraryService, errorSeverity);
     Map<String, CompiledLibrary> translatedLibraries = new HashMap<>();
     cqlTranslator
         .getTranslatedLibraries()
@@ -81,13 +82,17 @@ public abstract class CqlTooling {
     return includedLibrariesCql;
   }
 
+  // we need to default errorSeverity to Error, but also allow for warnings
   protected CqlTranslator runTranslator(
-      String cql, String accessToken, CqlLibraryService cqlLibraryService) {
+      String cql,
+      String accessToken,
+      CqlLibraryService cqlLibraryService,
+      CqlCompilerException.ErrorSeverity errorSeverity) {
     cqlLibraryService.setUpLibrarySourceProvider(cql, accessToken);
     RequestData requestData =
         RequestData.builder()
             .cqlData(cql)
-            .errorSeverity(CqlCompilerException.ErrorSeverity.Error)
+            .errorSeverity(errorSeverity)
             .signatures(LibraryBuilder.SignatureLevel.All)
             .annotations(true)
             .locators(true)

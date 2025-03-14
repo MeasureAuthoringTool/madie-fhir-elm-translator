@@ -10,6 +10,7 @@ import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.cqframework.cql.cql2elm.CqlCompilerException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -35,12 +36,13 @@ public class CqlParsingService extends CqlTooling {
    * @param accessToken Requesting User's Okta Bearer token
    * @return CqlBuilderLookup -> building blocks for CQL Definition UI builder
    */
-  public CqlBuilderLookup getCqlBuilderLookups(String cql, String accessToken) {
+  public CqlBuilderLookup getCqlBuilderLookups(
+      String cql, String accessToken, CqlCompilerException.ErrorSeverity errorSeverity) {
     if (StringUtils.isBlank(cql)) {
       return null;
     }
     log.info("Preparing CqlBuilder Lookups");
-    CQLTools cqlTools = parseCql(cql, accessToken, cqlLibraryService, null);
+    CQLTools cqlTools = parseCql(cql, accessToken, cqlLibraryService, null, errorSeverity);
     // all parameters
     Set<CqlBuilderLookup.Lookup> parameters =
         cqlTools.getAllParameters().stream().map(this::buildParameterLookup).collect(toSet());
@@ -129,8 +131,9 @@ public class CqlParsingService extends CqlTooling {
    *     will not appear as a Key.
    *     <p>Values: Set of CQL Definition Objects that are referenced in the Key CQL Definition.
    */
-  public Map<String, Set<CQLDefinition>> getDefinitionCallstacks(String cql, String accessToken) {
-    CQLTools cqlTools = parseCql(cql, accessToken, cqlLibraryService, null);
+  public Map<String, Set<CQLDefinition>> getDefinitionCallstacks(
+      String cql, String accessToken, CqlCompilerException.ErrorSeverity errorSeverity) {
+    CQLTools cqlTools = parseCql(cql, accessToken, cqlLibraryService, null, errorSeverity);
     Map<String, Set<String>> nodeGraph = cqlTools.getCallstack();
     Set<String> keys = nodeGraph.keySet();
     Set<CQLDefinition> cqlDefinitions =

@@ -8,6 +8,8 @@ import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import gov.cms.madie.cql_elm_translator.utils.cql.parsing.model.CQLDefinition;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+
+import org.cqframework.cql.cql2elm.CqlCompilerException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +50,8 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
     doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     Map<String, Set<CQLDefinition>> definitionCallstacks =
-        cqlParsingService.getDefinitionCallstacks(qiCoreMeasureCql, TOKEN);
+        cqlParsingService.getDefinitionCallstacks(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
 
     CQLDefinition define1 =
         CQLDefinition.builder()
@@ -112,7 +115,9 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
     doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
-    CqlBuilderLookup lookup = cqlParsingService.getCqlBuilderLookups(qiCoreMeasureCql, TOKEN);
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
     assertThat(lookup.getParameters().size(), is(2));
     assertThat(lookup.getDefinitions().size(), is(5));
     assertThat(lookup.getFunctions().size(), is(1));
@@ -121,7 +126,9 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
 
   @Test
   void testGetCqlBuilderLookupsForEmptyCql() {
-    CqlBuilderLookup lookup = cqlParsingService.getCqlBuilderLookups(null, TOKEN);
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            null, TOKEN, CqlCompilerException.ErrorSeverity.Info);
     assertThat(lookup, is(nullValue()));
   }
 }

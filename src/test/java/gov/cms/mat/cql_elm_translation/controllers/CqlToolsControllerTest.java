@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import gov.cms.madie.cql_elm_translator.dto.CqlBuilderLookup;
+import org.cqframework.cql.cql2elm.CqlCompilerException;
 import org.cqframework.cql.tools.formatter.CqlFormatterVisitor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,9 +68,12 @@ class CqlToolsControllerTest implements ResourceFileUtil {
     var sdc = SourceDataCriteria.builder().oid("1.2.3").description("EP: Test").title("EP").build();
     TreeSet<SourceDataCriteria> sdcSet = new TreeSet<SourceDataCriteria>();
     sdcSet.add(sdc);
-    when(dataCriteriaService.getRelevantElements(any(Measure.class), anyString()))
+    when(dataCriteriaService.getRelevantElements(
+            any(Measure.class), anyString(), any(CqlCompilerException.ErrorSeverity.class)))
         .thenReturn(sdcSet);
-    var result = cqlToolsController.getRelevantElements(measure, token);
+    var result =
+        cqlToolsController.getRelevantElements(
+            measure, token, CqlCompilerException.ErrorSeverity.Info);
     SourceDataCriteria sourceDataCriteria =
         ((TreeSet<SourceDataCriteria>) result.getBody()).first();
     assertThat(sourceDataCriteria.getOid(), is(equalTo(sdc.getOid())));
@@ -87,11 +91,13 @@ class CqlToolsControllerTest implements ResourceFileUtil {
   void testGetDefinitionCallstack() {
     Map<String, Set<CQLDefinition>> definitionCallstacks = new HashMap<>();
     definitionCallstacks.put("test", allDefinitions);
-    when(cqlParsingService.getDefinitionCallstacks(anyString(), anyString()))
+    when(cqlParsingService.getDefinitionCallstacks(
+            anyString(), anyString(), any(CqlCompilerException.ErrorSeverity.class)))
         .thenReturn(definitionCallstacks);
 
     ResponseEntity<Map<String, Set<CQLDefinition>>> result =
-        cqlToolsController.getDefinitionCallstack("test cql", "accessToken");
+        cqlToolsController.getDefinitionCallstack(
+            "test cql", "accessToken", CqlCompilerException.ErrorSeverity.Error);
     Set<CQLDefinition> defintions = result.getBody().get("test");
     assertThat(defintions.size(), is(equalTo(1)));
   }
@@ -101,7 +107,8 @@ class CqlToolsControllerTest implements ResourceFileUtil {
     var p = CqlBuilderLookup.Lookup.builder().name("Parameter").logic("abc").build();
     var d = CqlBuilderLookup.Lookup.builder().name("Definition").logic("abcd").build();
     var f = CqlBuilderLookup.Lookup.builder().name("Function").logic("abcdef").build();
-    when(cqlParsingService.getCqlBuilderLookups(anyString(), anyString()))
+    when(cqlParsingService.getCqlBuilderLookups(
+            anyString(), anyString(), any(CqlCompilerException.ErrorSeverity.class)))
         .thenReturn(
             CqlBuilderLookup.builder()
                 .parameters(Set.of(p))
@@ -110,7 +117,8 @@ class CqlToolsControllerTest implements ResourceFileUtil {
                 .build());
 
     ResponseEntity<CqlBuilderLookup> result =
-        cqlToolsController.getCqlBuilderLookups("CQL", "accessToken");
+        cqlToolsController.getCqlBuilderLookups(
+            "CQL", "accessToken", CqlCompilerException.ErrorSeverity.Error);
     CqlBuilderLookup cqlBuilderLookups = result.getBody();
     assertNotNull(cqlBuilderLookups);
     assertThat(cqlBuilderLookups.getParameters().size(), is(1));
