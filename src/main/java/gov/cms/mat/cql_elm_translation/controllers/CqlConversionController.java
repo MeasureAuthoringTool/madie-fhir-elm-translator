@@ -48,7 +48,7 @@ public class CqlConversionController {
   public CqlConversionPayload cqlToElmJson(
       @RequestBody String cqlData,
       @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
-      @RequestParam(defaultValue = "Info") CqlCompilerException.ErrorSeverity errorSeverity,
+      @RequestParam(defaultValue = "Warning") CqlCompilerException.ErrorSeverity errorSeverity,
       @RequestParam(defaultValue = "true") Boolean annotations,
       @RequestParam(defaultValue = "true") Boolean locators,
       @RequestParam(value = "disable-list-demotion", defaultValue = "true")
