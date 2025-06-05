@@ -84,15 +84,7 @@ public class EffectiveDataRequirementService {
             libraryDetails.getExpressions(),
             true,
             recursive);
-    // Temporarily replacing the url for STU5 - https://jira.cms.gov/browse/MAT-8290
-    effectiveDataRequirements.getExtension().stream()
-        .filter(
-            extension ->
-                "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/cqfm-logicDefinition"
-                    .equalsIgnoreCase(extension.getUrl()))
-        .forEach(
-            extension ->
-                extension.setUrl("http://hl7.org/fhir/StructureDefinition/cqf-logicDefinition"));
+
     effectiveDataRequirements.setId("effective-data-requirements");
     return effectiveDataRequirements;
   }

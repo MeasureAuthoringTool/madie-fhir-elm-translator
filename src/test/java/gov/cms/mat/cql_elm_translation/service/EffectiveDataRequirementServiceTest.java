@@ -77,9 +77,6 @@ class EffectiveDataRequirementServiceTest {
         effectiveDataRequirementService.getEffectiveDataRequirements(
             cqlLibraryDetails, false, testAccessToken);
     assertEquals(r5Library.getId(), "effective-data-requirements");
-    assertEquals(
-        "http://hl7.org/fhir/StructureDefinition/cqf-logicDefinition",
-        r5Library.getExtension().get(0).getUrl());
   }
 
   @Test
