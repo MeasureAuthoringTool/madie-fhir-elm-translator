@@ -73,8 +73,11 @@ public class DataCriteriaService extends CqlTooling {
           }
         });
 
-    Set<SourceDataCriteria> relevantSet = new TreeSet<>();
-    sourceDataCriteria.stream()
+    Set<SourceDataCriteria> relevantSet = new TreeSet<>(
+            Comparator.comparing(SourceDataCriteria::getName, Comparator.nullsFirst(Comparator.naturalOrder()))
+    );
+
+      sourceDataCriteria.stream()
         .filter(sourceDataCriteria1 -> values.contains(sourceDataCriteria1.getName()))
         .forEach(
             src -> {
