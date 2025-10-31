@@ -1,0 +1,51 @@
+{
+  "resourceType" : "ImplementationGuide",
+  "id" : "cms.fhir.us.madieig",
+  "text" : {
+    "status" : "generated",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>cms.fhir.us.madieig</p></div>"
+  },
+  "url" : "http://madie.cms.gov/fhir/us/madieig/ImplementationGuide/cms.fhir.us.madieig",
+  "version" : "0.1.0",
+  "name" : "cms.fhir.us.madieig",
+  "title" : "MADiE IG",
+  "status" : "draft",
+  "experimental" : false,
+  "date" : "2025-10-27",
+  "publisher" : "CMS",
+  "contact" : [{
+    "name" : "CMS",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://www.cms.gov"
+    }]
+  },
+    {
+      "name" : "HL7",
+      "telecom" : [{
+        "system" : "url",
+        "value" : "http://hl7.org/fhir"
+      }]
+    }],
+  "description" : "This IG was defined as initial input into the npm packaging process. For reference, refer to https://github.com/cqframework/clinical_quality_language/tree/master/Src/java/cqf-fhir-npm.",
+  "jurisdiction" : [{
+    "coding" : [{
+      "system" : "urn:iso:std:iso:3166",
+      "code" : "US"
+    }]
+  }],
+  "copyright" : "Published by MADiE team under the standard FHIR license (CC0)",
+  "packageId" : "cms.fhir.us.madieig",
+  "license" : "CC0-1.0",
+  "fhirVersion" : ["4.0.1"],
+  "dependsOn" : [{
+    "uri" : "http://hl7.org/fhir/ImplementationGuide/qicore",
+    "packageId": "hl7.fhir.us.qicore",
+    "version": "7.0.1"
+  },
+    {
+      "uri" : "http://hl7.org/fhir/ImplementationGuide/cql",
+      "packageId": "hl7.fhir.us.cql",
+      "version": "1.0.0"
+    }]
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ImplementationGuide xmlns="http://hl7.org/fhir">
+    <id value="gov.cms.madie"/>
+    <text>
+        <status value="generated"/>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+            <p class="res-header-id">
+                <b>Generated Narrative: ImplementationGuide gov.cms.madie</b>
+            </p>
+            <a name="gov.cms.madie"></a>
+            <h2>MADiECore</h2>
+<!--            <p>The official URL for this implementation guide is:</p>-->
+<!--            <pre>http://hl7.org/fhir/us/qicore/ImplementationGuide/hl7.fhir.us.qicore</pre>-->
+            <div>
+                <p>The QICore Implementation Guide defines a set of FHIR profiles with extensions and bindings needed to
+                    create interoperable, quality-focused applications. The profiles in this implementation guide derive
+                    from and extend the <a href="http://hl7.org/fhir/us/core">US Core</a> profiles to provide a common
+                    foundation for building, sharing, and evaluating knowledge artifacts across quality improvement
+                    efforts in the US Realm.
+                </p>
+            </div>
+        </div>
+    </text>
+    <extension url="http://hl7.org/fhir/StructureDefinition/structuredefinition-wg">
+        <valueCode value="cqi"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status">
+        <valueCode value="trial-use"/>
+    </extension>
+    <extension url="http://hl7.org/fhir/StructureDefinition/structuredefinition-fmm">
+        <valueInteger value="4"/>
+    </extension>
+    <url value="https://www.emeasuretool.cms.gov/"/>
+    <version value="1.0.0"/>
+    <name value="MADiECore"/>
+    <title value="MADiE-Core Implementation Guide"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2025-05-22T22:15:58+00:00"/>
+    <publisher value="ICF"/>
+    <contact>
+        <name value="ICF"/>
+        <telecom>
+            <system value="url"/>
+            <value value="https://www.icf.com/contact-us"/>
+        </telecom>
+    </contact>
+    <description
+            value="The QICore Implementation Guide defines a set of FHIR profiles with extensions and bindings needed to create interoperable, quality-focused applications. The profiles in this implementation guide derive from and extend the [US Core](http://hl7.org/fhir/us/core) profiles to provide a common foundation for building, sharing, and evaluating knowledge artifacts across quality improvement efforts in the US Realm."/>
+    <jurisdiction>
+        <coding>
+            <system value="urn:iso:std:iso:3166"/>
+            <code value="US"/>
+        </coding>
+    </jurisdiction>
+    <packageId value="gov.cms.madie.core"/>
+    <license value="CC0-1.0"/>
+    <fhirVersion value="4.0.1"/>
+    <dependsOn id="qicore">
+        <uri value="http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.qicore"/>
+        <packageId value="hl7.fhir.us.qicore"/>
+        <version value="7.0.0"/>
+    </dependsOn>
+    <dependsOn id="uscore">
+        <uri value="http://hl7.org/fhir/us/core/ImplementationGuide/hl7.fhir.us.core"/>
+        <packageId value="hl7.fhir.us.core"/>
+        <version value="7.0.0"/>
+    </dependsOn>
+</ImplementationGuide>
