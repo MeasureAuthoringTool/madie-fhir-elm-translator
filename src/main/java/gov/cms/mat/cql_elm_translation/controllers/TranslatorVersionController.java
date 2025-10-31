@@ -21,19 +21,19 @@ public class TranslatorVersionController {
 
   @GetMapping()
   public ResponseEntity<String> getTranslatorVersion(
-          @RequestParam(required = true, name = "draft") boolean draft) {
+      @RequestParam(required = true, name = "draft") boolean draft) {
     if (!draft) {
       throw new ResponseStatusException(
-              HttpStatus.BAD_REQUEST, "Non-draft version is no longer supported.");
+          HttpStatus.BAD_REQUEST, "Non-draft version is no longer supported.");
     }
 
     Package translatorPackage = getTranslatorPackage();
     if (translatorPackage != null
-            && StringUtils.isNotBlank(translatorPackage.getImplementationVersion())) {
+        && StringUtils.isNotBlank(translatorPackage.getImplementationVersion())) {
       return ResponseEntity.ok(translatorPackage.getImplementationVersion());
     } else {
       return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY)
-              .body("Unable to determine translator version.");
+          .body("Unable to determine translator version.");
     }
   }
 

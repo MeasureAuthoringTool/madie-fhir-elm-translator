@@ -9,7 +9,8 @@ import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import gov.cms.madie.cql_elm_translator.utils.cql.CQLTools;
 import gov.cms.madie.cql_elm_translator.utils.cql.parsing.model.CQLCode;
 import gov.cms.madie.cql_elm_translator.utils.cql.parsing.model.CQLValueSet;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -23,10 +24,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class DataCriteriaService extends CqlTooling {
 
   private final CqlLibraryService cqlLibraryService;
+  @Getter private ModelManagerFactory modelManagerFactory;
 
   public Set<SourceDataCriteria> getRelevantElements(
       Measure measure, String accessToken, CqlCompilerException.ErrorSeverity errorSeverity) {

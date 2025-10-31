@@ -47,7 +47,8 @@ public class CqlConversionController {
   @PutMapping(path = "/cql", consumes = "text/plain", produces = "application/elm+json")
   public CqlConversionPayload cqlToElmJson(
       @RequestBody String cqlData,
-      @RequestParam(required = false) LibraryBuilder.SignatureLevel signatures,
+      @RequestParam(required = false, defaultValue = "All")
+          LibraryBuilder.SignatureLevel signatures,
       @RequestParam(defaultValue = "Info") CqlCompilerException.ErrorSeverity errorSeverity,
       @RequestParam(defaultValue = "true") Boolean annotations,
       @RequestParam(defaultValue = "true") Boolean locators,
@@ -75,9 +76,51 @@ public class CqlConversionController {
             .validateUnits(validateUnits)
             .resultTypes(resultTypes)
             .build();
+    log.info("calling translation with requestData: {}", requestData);
+    log.info("checkContext: {}", checkContext);
     cqlLibraryService.setUpLibrarySourceProvider(cqlData, accessToken);
 
     return cqlConversionService.translateCqlToElm(requestData, checkContext);
+  }
+
+  @PutMapping(path = "/test/cql", consumes = "text/plain", produces = "application/elm+json")
+  public JsonNode cqlToElmJsonOnly(
+      @RequestBody String cqlData,
+      @RequestParam(required = false, defaultValue = "All")
+          LibraryBuilder.SignatureLevel signatures,
+      @RequestParam(defaultValue = "Info") CqlCompilerException.ErrorSeverity errorSeverity,
+      @RequestParam(defaultValue = "true") Boolean annotations,
+      @RequestParam(defaultValue = "true") Boolean locators,
+      @RequestParam(value = "disable-list-demotion", defaultValue = "true")
+          Boolean disableListDemotion,
+      @RequestParam(value = "disable-list-promotion", defaultValue = "true")
+          Boolean disableListPromotion,
+      @RequestParam(value = "disable-method-invocation", defaultValue = "false")
+          Boolean disableMethodInvocation,
+      @RequestParam(value = "validate-units", defaultValue = "true") Boolean validateUnits,
+      @RequestParam(value = "result-types", defaultValue = "true") Boolean resultTypes,
+      @RequestParam(value = "checkContext", defaultValue = "false") Boolean checkContext,
+      @RequestHeader("Authorization") String accessToken)
+      throws JsonProcessingException {
+    RequestData requestData =
+        RequestData.builder()
+            .cqlData(cqlData)
+            .errorSeverity(errorSeverity)
+            .signatures(signatures)
+            .annotations(annotations)
+            .locators(locators)
+            .disableListDemotion(disableListDemotion)
+            .disableListPromotion(disableListPromotion)
+            .disableMethodInvocation(disableMethodInvocation)
+            .validateUnits(validateUnits)
+            .resultTypes(resultTypes)
+            .build();
+    log.info("calling translation with requestData: {}", requestData);
+    cqlLibraryService.setUpLibrarySourceProvider(cqlData, accessToken);
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    String json = cqlConversionService.translateCqlToElm(requestData, checkContext).getJson();
+    return objectMapper.readTree(json);
   }
 
   /**

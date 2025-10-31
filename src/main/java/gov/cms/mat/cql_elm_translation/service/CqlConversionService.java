@@ -14,6 +14,8 @@ import gov.cms.mat.cql_elm_translation.exceptions.MissingLibraryCqlCompilerExcep
 import gov.cms.mat.cql_elm_translation.service.filters.CqlTranslatorExceptionFilter;
 import gov.cms.mat.cql_elm_translation.service.support.CqlExceptionErrorProcessor;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -35,6 +37,7 @@ import org.hl7.elm.r1.ParameterDef;
 import org.hl7.elm.r1.UsingDef;
 import org.hl7.elm.r1.ValueSetDef;
 import org.hl7.elm.r1.VersionedIdentifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -50,9 +53,11 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class CqlConversionService extends CqlTooling {
 
   private static final String LOG_MESSAGE_TEMPLATE = "ErrorSeverity: %s, Message: %s";
+  @Getter @Autowired private ModelManagerFactory modelManagerFactory;
 
   public CqlConversionPayload translateCqlToElm(RequestData requestData, boolean checkContext) {
     // verify the presence of ^using .*version '[0-9]\.[0-9]\.[0-9]'$ on the cql
@@ -64,6 +69,8 @@ public class CqlConversionService extends CqlTooling {
       log.debug("cqlTranslatorException: \n{}", requestData.getCqlData());
       noModelVersion = true;
     }
+    log.info("ModelManagerFactory: {}", modelManagerFactory);
+
     // Gets the translator results
     CqlTranslator cqlTranslator = processCqlData(requestData);
 

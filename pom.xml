@@ -14,7 +14,7 @@
   <description>Translates CQL to ELM for MADiE</description>
 
   <properties>
-    <cqframework.version>3.27.0</cqframework.version>
+    <cqframework.version>3.29.0</cqframework.version>
     <jackson.version>2.17.2</jackson.version>
     <java.version>17</java.version>
     <mvn.checkstyle.file>madie-checkstyle.xml</mvn.checkstyle.file>
@@ -130,6 +130,12 @@
       <version>${cqframework.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>info.cqframework</groupId>
+      <artifactId>cqf-fhir-npm</artifactId>
+      <version>${cqframework.version}</version>
+    </dependency>
+
     <!--  Dependencies for R4, R5, and hapi-fhir all need to have the same
 		version # or classes will turn up undefined  -->
     <dependency>
@@ -177,7 +183,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.14.0</version>
+      <version>2.20.0</version>
     </dependency>
 
     <!--  openAPI updated for springBoot 3  -->
@@ -263,12 +269,12 @@
     <dependency>
       <groupId>gov.cms.madie</groupId>
       <artifactId>madie-translator-commons</artifactId>
-      <version>2.1.4-SNAPSHOT</version>
+      <version>2.1.302-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>gov.cms.madie</groupId>
       <artifactId>madie-rest-commons</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
+      <version>1.0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

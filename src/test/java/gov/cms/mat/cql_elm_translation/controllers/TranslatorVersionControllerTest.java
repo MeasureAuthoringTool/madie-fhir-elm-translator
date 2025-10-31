@@ -76,9 +76,9 @@ public class TranslatorVersionControllerTest {
   public void testGetTranslatorVersionForDraftFalseThrowsException() {
     // When
     ResponseStatusException exception =
-            assertThrows(
-                    ResponseStatusException.class,
-                    () -> translatorVersionController.getTranslatorVersion(false));
+        assertThrows(
+            ResponseStatusException.class,
+            () -> translatorVersionController.getTranslatorVersion(false));
 
     // Then
     assertThat(exception.getStatusCode(), is(equalTo(HttpStatus.BAD_REQUEST)));
