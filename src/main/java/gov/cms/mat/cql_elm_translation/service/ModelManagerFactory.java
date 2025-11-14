@@ -19,7 +19,6 @@ import org.hl7.fhir.utilities.npm.FilesystemPackageCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
@@ -28,7 +27,6 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 
 @Slf4j
-@Service
 public class ModelManagerFactory implements ILoggingService {
 
   private final String fhirCachePath;
