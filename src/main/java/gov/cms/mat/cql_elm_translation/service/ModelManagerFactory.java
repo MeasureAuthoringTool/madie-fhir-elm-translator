@@ -78,14 +78,12 @@ public class ModelManagerFactory implements ILoggingService {
               dep -> {
                 try {
                   ModelIdentifier identifier =
-                      new ModelIdentifier().withId(dep.getId()).withVersion(dep.getVersion());
+                      new ModelIdentifier(dep.getId(), null, dep.getVersion());
                   ModelManager modelManager = buildModelManager(identifier, ig);
                   modelManagers.put(identifier, modelManager);
                   if (StringUtils.isNotBlank(identifier.getSystem())) {
                     modelManagers.put(
-                        new ModelIdentifier()
-                            .withId(identifier.getId())
-                            .withVersion(identifier.getVersion()),
+                        new ModelIdentifier(identifier.getId(), null, identifier.getVersion()),
                         modelManager);
                   }
                   log.info(
@@ -120,10 +118,10 @@ public class ModelManagerFactory implements ILoggingService {
     return this.modelManagers.keySet().stream()
         .map(
             modelIdentifier ->
-                new ModelIdentifier()
-                    .withId(modelIdentifier.getId())
-                    .withVersion(modelIdentifier.getVersion())
-                    .withSystem(modelIdentifier.getSystem()))
+                new ModelIdentifier(
+                    modelIdentifier.getId(),
+                    modelIdentifier.getSystem(),
+                    modelIdentifier.getVersion()))
         .toList();
   }
 

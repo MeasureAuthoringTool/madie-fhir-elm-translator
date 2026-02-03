@@ -6,7 +6,7 @@ import gov.cms.mat.cql_elm_translation.ResourceFileUtil;
 import org.cqframework.cql.cql2elm.CqlCompilerException;
 
 import org.cqframework.cql.cql2elm.CqlSemanticException;
-import org.cqframework.cql.elm.tracking.TrackBack;
+import org.cqframework.cql.cql2elm.tracking.TrackBack;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,13 +35,15 @@ class CqlExceptionErrorProcessorTest implements ResourceFileUtil {
     cqlErrors.add(
         new CqlSemanticException(
             "Member relevantDatetime not found for type null.",
+            new TrackBack(versionedIdentifier, 2, 2, 2, 12),
             CqlCompilerException.ErrorSeverity.Error,
-            new TrackBack(versionedIdentifier, 2, 2, 2, 12)));
+            null));
     cqlErrors.add(
         new CqlSemanticException(
             "just warning",
+            new TrackBack(versionedIdentifier, 3, 3, 3, 13),
             CqlCompilerException.ErrorSeverity.Warning,
-            new TrackBack(versionedIdentifier, 3, 3, 3, 13)));
+            null));
 
     VersionedIdentifier includedLibraryIdentifier = new VersionedIdentifier();
     includedLibraryIdentifier.setVersion("7.0.000");
@@ -49,8 +51,9 @@ class CqlExceptionErrorProcessorTest implements ResourceFileUtil {
     cqlTranslatorExternalErrors.add(
         new CqlCompilerException(
             "This is an External Error",
+            new TrackBack(includedLibraryIdentifier, 7, 7, 7, 17),
             CqlCompilerException.ErrorSeverity.Error,
-            new TrackBack(includedLibraryIdentifier, 7, 7, 7, 17)));
+            null) {});
   }
 
   @Test

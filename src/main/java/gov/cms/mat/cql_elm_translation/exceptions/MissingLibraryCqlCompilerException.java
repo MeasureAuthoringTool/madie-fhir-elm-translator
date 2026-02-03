@@ -1,7 +1,7 @@
 package gov.cms.mat.cql_elm_translation.exceptions;
 
 import org.cqframework.cql.cql2elm.CqlCompilerException;
-import org.cqframework.cql.elm.tracking.TrackBack;
+import org.cqframework.cql.cql2elm.tracking.TrackBack;
 import org.hl7.elm.r1.VersionedIdentifier;
 
 public class MissingLibraryCqlCompilerException extends CqlCompilerException {
@@ -13,7 +13,8 @@ public class MissingLibraryCqlCompilerException extends CqlCompilerException {
       final String library, VersionedIdentifier identifier, int lineNumber) {
     super(
         String.format(MESSAGE, library, library),
+        new TrackBack(identifier, lineNumber, 0, lineNumber, 0),
         CqlCompilerException.ErrorSeverity.Error,
-        new TrackBack(identifier, lineNumber, 0, lineNumber, 0));
+        null);
   }
 }

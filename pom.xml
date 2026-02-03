@@ -14,10 +14,11 @@
   <description>Translates CQL to ELM for MADiE</description>
 
   <properties>
-    <cqframework.version>3.29.0</cqframework.version>
+    <cqframework.version>4.2.0</cqframework.version>
     <hapi.fhir.version>8.6.1</hapi.fhir.version>
     <jackson.version>2.17.2</jackson.version>
     <java.version>17</java.version>
+    <kotlin.version>2.0.21</kotlin.version>
     <mvn.checkstyle.file>madie-checkstyle.xml</mvn.checkstyle.file>
     <mvn.checkstyle.version>3.1.2</mvn.checkstyle.version>
     <mvnreports.version>3.1.1</mvnreports.version>
@@ -105,41 +106,44 @@
     <!--  Dependencies required to use cql to elm translator from cqFramework  -->
     <!--
 		https://github.com/cqframework/clinical_quality_language/blob/master/Src/java/cql-to-elm/OVERVIEW.md  -->
-    <dependency>
-      <groupId>info.cqframework</groupId>
-      <artifactId>model-jaxb</artifactId>
-      <version>${cqframework.version}</version>
-    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>info.cqframework</groupId>-->
+    <!--      <artifactId>model-jaxb</artifactId>-->
+    <!--      <version>${cqframework.version}</version>-->
+    <!--    </dependency>-->
 
     <dependency>
-      <groupId>info.cqframework</groupId>
+      <groupId>org.cqframework</groupId>
       <artifactId>cql-to-elm</artifactId>
       <version>${cqframework.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>info.cqframework</groupId>
+      <groupId>org.cqframework</groupId>
       <artifactId>elm</artifactId>
       <version>${cqframework.version}</version>
     </dependency>
-    <dependency>
-      <groupId>info.cqframework</groupId>
-      <artifactId>elm-jaxb</artifactId>
-      <version>${cqframework.version}</version>
-    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>info.cqframework</groupId>-->
+    <!--      <artifactId>elm-jaxb</artifactId>-->
+    <!--      <version>${cqframework.version}</version>-->
+    <!--    </dependency>-->
 
     <!-- for data requirement processing -->
     <dependency>
-      <groupId>info.cqframework</groupId>
+      <groupId>org.cqframework</groupId>
       <artifactId>elm-fhir</artifactId>
       <version>${cqframework.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>info.cqframework</groupId>
+      <groupId>org.cqframework</groupId>
       <artifactId>cqf-fhir-npm</artifactId>
       <version>${cqframework.version}</version>
     </dependency>
+
+    <!-- Kotlin standard library -->
+
 
     <!--  Dependencies for R4, R5, and hapi-fhir all need to have the same
 		version # or classes will turn up undefined  -->
@@ -274,7 +278,7 @@
     <dependency>
       <groupId>gov.cms.madie</groupId>
       <artifactId>madie-translator-commons</artifactId>
-      <version>2.2.0-SNAPSHOT</version>
+      <version>3.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>gov.cms.madie</groupId>
@@ -363,6 +367,24 @@
               <version>8.40</version>
             </dependency>
           </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-maven-plugin</artifactId>
+          <version>${kotlin.version}</version>
+          <executions>
+            <execution>
+              <id>compile</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <args>
+              <arg>-opt-in=kotlin.uuid.ExperimentalUuidApi</arg>
+            </args>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>com.spotify.fmt</groupId>
@@ -588,6 +610,29 @@
           <keepBlankLines>true</keepBlankLines>
           <sortDependencies>scope</sortDependencies>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <sourceDirs>
+                <source>src/main/java</source>
+                <source>target/generated-sources/annotations</source>
+              </sourceDirs>
+              <args>
+                <arg>-opt-in=kotlin.uuid.ExperimentalUuidApi</arg>
+              </args>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

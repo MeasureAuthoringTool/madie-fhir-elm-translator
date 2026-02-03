@@ -95,7 +95,7 @@ class EffectiveDataRequirementServiceTest {
     when(translationResource.buildTranslator(any())).thenReturn(cqlTranslator);
     when(translationResource.getLibraryManager()).thenReturn(libraryManager);
     when(cqlTranslator.getTranslatedLibrary()).thenReturn(compiledLibrary);
-    when(cqlTranslator.getTranslatedLibraries()).thenReturn(new ConcurrentHashMap<>());
+    when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getIdentifier()).thenReturn(versionedIdentifier);
     when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getLibrary()).thenReturn(elmLibrary);
@@ -139,7 +139,7 @@ class EffectiveDataRequirementServiceTest {
     when(translationResource.buildTranslator(any())).thenReturn(cqlTranslator);
     when(translationResource.getLibraryManager()).thenReturn(libraryManager);
     when(cqlTranslator.getTranslatedLibrary()).thenReturn(compiledLibrary);
-    when(cqlTranslator.getTranslatedLibraries()).thenReturn(new ConcurrentHashMap<>());
+    when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getIdentifier()).thenReturn(versionedIdentifier);
     when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getLibrary()).thenReturn(elmLibrary);
@@ -197,7 +197,7 @@ class EffectiveDataRequirementServiceTest {
     when(translationResource.buildTranslator(any())).thenReturn(cqlTranslator);
     when(translationResource.getLibraryManager()).thenReturn(libraryManager);
     when(cqlTranslator.getTranslatedLibrary()).thenReturn(compiledLibrary);
-    when(cqlTranslator.getTranslatedLibraries()).thenReturn(new ConcurrentHashMap<>());
+    when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getIdentifier()).thenReturn(versionedIdentifier);
     when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getLibrary()).thenReturn(elmLibrary);

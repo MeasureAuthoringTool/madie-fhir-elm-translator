@@ -60,7 +60,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerWithValidIdentifier() {
-    ModelIdentifier identifier = new ModelIdentifier().withId("FHIR").withVersion("4.0.1");
+    ModelIdentifier identifier = new ModelIdentifier("FHIR", null, "4.0.1");
 
     ModelManager modelManager = modelManagerFactory.getModelManager(identifier);
 
@@ -69,7 +69,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerWithQICoreIdentifier() {
-    ModelIdentifier identifier = new ModelIdentifier().withId("QICore").withVersion("7.0.1");
+    ModelIdentifier identifier = new ModelIdentifier("QICore", null, "7.0.1");
 
     ModelManager modelManager = modelManagerFactory.getModelManager(identifier);
 
@@ -79,8 +79,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerWithCqlIdentifier() {
-    ModelIdentifier identifier =
-        new ModelIdentifier().withId("hl7.fhir.us.cql").withVersion("1.0.0");
+    ModelIdentifier identifier = new ModelIdentifier("hl7.fhir.us.cql", null, "1.0.0");
 
     ModelManager modelManager = modelManagerFactory.getModelManager(identifier);
 
@@ -98,7 +97,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerWithNullIdThrowsException() {
-    ModelIdentifier identifier = new ModelIdentifier().withId(null).withVersion("1.0.0");
+    ModelIdentifier identifier = new ModelIdentifier(null, null, "1.0.0");
 
     Exception exception =
         assertThrows(
@@ -109,7 +108,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerWithEmptyIdThrowsException() {
-    ModelIdentifier identifier = new ModelIdentifier().withId("").withVersion("1.0.0");
+    ModelIdentifier identifier = new ModelIdentifier("", null, "1.0.0");
 
     Exception exception =
         assertThrows(
@@ -123,7 +122,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerReturnsSameInstanceForSameIdentifier() {
-    ModelIdentifier identifier = new ModelIdentifier().withId("FHIR").withVersion("4.0.1");
+    ModelIdentifier identifier = new ModelIdentifier("FHIR", null, "4.0.1");
 
     ModelManager modelManager1 = modelManagerFactory.getModelManager(identifier);
     ModelManager modelManager2 = modelManagerFactory.getModelManager(identifier);
@@ -135,8 +134,8 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerReturnsDifferentInstancesForDifferentIdentifiers() {
-    ModelIdentifier identifier1 = new ModelIdentifier().withId("FHIR").withVersion("4.0.1");
-    ModelIdentifier identifier2 = new ModelIdentifier().withId("FHIR").withVersion("5.0.0");
+    ModelIdentifier identifier1 = new ModelIdentifier("FHIR", null, "4.0.1");
+    ModelIdentifier identifier2 = new ModelIdentifier("FHIR", null, "5.0.0");
 
     ModelManager modelManager1 = modelManagerFactory.getModelManager(identifier1);
     ModelManager modelManager2 = modelManagerFactory.getModelManager(identifier2);
@@ -148,7 +147,7 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testGetModelManagerCreatesNewManagerForUnknownModel() {
-    ModelIdentifier identifier = new ModelIdentifier().withId("UnknownModel").withVersion("1.0.0");
+    ModelIdentifier identifier = new ModelIdentifier("UnknownModel", null, "1.0.0");
 
     ModelManager modelManager = modelManagerFactory.getModelManager(identifier);
 
@@ -173,9 +172,9 @@ public class ModelManagerFactoryTest {
 
   @Test
   void testMultipleModelManagersCanCoexist() {
-    ModelIdentifier identifier1 = new ModelIdentifier().withId("Model1").withVersion("1.0.0");
-    ModelIdentifier identifier2 = new ModelIdentifier().withId("Model2").withVersion("2.0.0");
-    ModelIdentifier identifier3 = new ModelIdentifier().withId("Model3").withVersion("3.0.0");
+    ModelIdentifier identifier1 = new ModelIdentifier("Model1", null, "1.0.0");
+    ModelIdentifier identifier2 = new ModelIdentifier("Model2", null, "2.0.0");
+    ModelIdentifier identifier3 = new ModelIdentifier("Model3", null, "3.0.0");
 
     ModelManager modelManager1 = modelManagerFactory.getModelManager(identifier1);
     ModelManager modelManager2 = modelManagerFactory.getModelManager(identifier2);
