@@ -143,6 +143,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     ModelManager modelManager = mock(ModelManager.class);
     when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(usingProperties);
     when(modelManagerFactory.getModelManager(any(ModelIdentifier.class))).thenReturn(modelManager);
+    when(modelManager.getNamespaceManager()).thenReturn(namespaceManager);
 
     // when
     TranslationResource result = service.getTranslationResource(data);
