@@ -8,7 +8,6 @@ import gov.cms.madie.cql_elm_translator.utils.cql.data.RequestData;
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import gov.cms.madie.cql_elm_translator.utils.cql.CQLTools;
 import gov.cms.madie.cql_elm_translator.utils.cql.parsing.model.CQLModel;
-import gov.cms.mat.cql_elm_translation.exceptions.UnsupportedModelException;
 import gov.cms.mat.cql_elm_translation.utils.cql.FhirUtil;
 import gov.cms.mat.cql_elm_translation.utils.cql.VersionUtil;
 import kotlinx.io.Source;
@@ -148,9 +147,8 @@ public abstract class CqlTooling {
     UsingProperties usingProperties =
         fhirUtil.getMostSpecificFhirModel(cqlTextParser.getAllUsings());
     // Treat any QICore/FHIR version >= baseline (MIN_FHIR_VERSION)
-    if (usingProperties == null) {
-      throw new UnsupportedModelException();
-    } else if (usingProperties.getVersion() != null
+    if (usingProperties != null
+        && usingProperties.getVersion() != null
         && VersionUtil.isVersionAtLeast(usingProperties.getVersion(), MIN_FHIR_VERSION)) {
       ModelIdentifier modelIdentifier =
           new ModelIdentifier(usingProperties.getLibraryType(), null, usingProperties.getVersion());
