@@ -93,7 +93,6 @@ class CqlConversionServicePropertyTest implements ResourceFileUtil {
     String locatorTag = "\"locator\":";
 
     String jsonDefault = getJson();
-    System.out.println(jsonDefault);
     assertTrue(jsonDefault.contains(locatorTag));
 
     locators = Boolean.FALSE;

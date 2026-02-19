@@ -105,11 +105,6 @@
     <!--  Dependencies required to use cql to elm translator from cqFramework  -->
     <!--
 		https://github.com/cqframework/clinical_quality_language/blob/master/Src/java/cql-to-elm/OVERVIEW.md  -->
-    <!--    <dependency>-->
-    <!--      <groupId>org.cqframework</groupId>-->
-    <!--      <artifactId>model-jaxb</artifactId>-->
-    <!--      <version>${cqframework.version}</version>-->
-    <!--    </dependency>-->
 
     <dependency>
       <groupId>org.cqframework</groupId>
@@ -122,11 +117,6 @@
       <artifactId>elm</artifactId>
       <version>${cqframework.version}</version>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.cqframework</groupId>-->
-    <!--      <artifactId>elm-jaxb</artifactId>-->
-    <!--      <version>${cqframework.version}</version>-->
-    <!--    </dependency>-->
 
     <!-- for data requirement processing -->
     <dependency>
