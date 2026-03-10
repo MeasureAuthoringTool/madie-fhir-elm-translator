@@ -626,4 +626,260 @@ class CqlConversionServiceTest implements ResourceFileUtil {
   private UsingProperties createUsingProperties(String libraryType, String version) {
     return UsingProperties.builder().libraryType(libraryType).version(version).build();
   }
+
+  @Test
+  void translateCqlToElmReturnsPayloadWithJsonAndXml() {
+    String cqlData = getData("/qicore_define_callstack.cql");
+    String helperCql = getData("/qicore_included_lib.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties qicoreUsing = createUsingProperties("QICore", "4.1.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(qicoreUsing);
+    doReturn(helperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlConversionPayload payload = service.translateCqlToElm(data, false);
+
+    assertNotNull(payload);
+    assertNotNull(payload.getJson());
+    assertNotNull(payload.getXml());
+    assertTrue(payload.getJson().contains("library"));
+    assertTrue(payload.getXml().contains("library"));
+  }
+
+  @Test
+  void translateCqlToElmReportsModelAndVersionMissingError() {
+    String cqlData = "library Test version '1.0.0'\ndefine \"Test\": true";
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties usingProperties = createUsingProperties("FHIR", "4.0.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(usingProperties);
+
+    CqlConversionPayload payload = service.translateCqlToElm(data, false);
+
+    assertNotNull(payload);
+    assertNotNull(payload.getJson());
+  }
+
+  @Test
+  void processForLibraryRulesExceptionsDoesNotAddErrorForFhirHelpers() {
+    String cqlData = getData("/fhirhelpers.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties fhirUsing = createUsingProperties("FHIR", "4.0.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(fhirUsing);
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    int initialExceptionCount = cqlTranslator.getExceptions().size();
+    service.processForLibraryRulesExceptions(cqlTranslator, cqlData);
+
+    assertThat(cqlTranslator.getExceptions().size(), is(initialExceptionCount));
+  }
+
+  @Test
+  void processForLibraryRulesExceptionsHandlesNullCql() {
+    String cqlData = getData("/fhir.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties fhirUsing = createUsingProperties("FHIR", "4.0.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(fhirUsing);
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    int initialExceptionCount = cqlTranslator.getExceptions().size();
+    service.processForLibraryRulesExceptions(cqlTranslator, null);
+
+    assertThat(cqlTranslator.getExceptions().size(), is(initialExceptionCount));
+  }
+
+  @Test
+  void processForLibraryRulesExceptionsHandlesBlankCql() {
+    String cqlData = getData("/fhir.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties fhirUsing = createUsingProperties("FHIR", "4.0.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(fhirUsing);
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    int initialExceptionCount = cqlTranslator.getExceptions().size();
+    service.processForLibraryRulesExceptions(cqlTranslator, "");
+
+    assertThat(cqlTranslator.getExceptions().size(), is(initialExceptionCount));
+  }
+
+  @Test
+  void convertToJsonReturnsJsonString() throws IOException {
+    Library library = new Library();
+    VersionedIdentifier identifier = new VersionedIdentifier();
+    identifier.setId("TestLib");
+    identifier.setVersion("1.0.0");
+    library.setIdentifier(identifier);
+
+    String json = service.convertToJson(library, LibraryContentType.JSON);
+
+    assertNotNull(json);
+    assertTrue(json.contains("TestLib"));
+    assertTrue(json.contains("1.0.0"));
+  }
+
+  @Test
+  void convertToXmlReturnsXmlString() throws IOException {
+    Library library = new Library();
+    VersionedIdentifier identifier = new VersionedIdentifier();
+    identifier.setId("TestLib");
+    identifier.setVersion("1.0.0");
+    library.setIdentifier(identifier);
+
+    String xml = service.convertToJson(library, LibraryContentType.XML);
+
+    assertNotNull(xml);
+    assertTrue(xml.contains("TestLib"));
+    assertTrue(xml.contains("1.0.0"));
+  }
+
+  @Test
+  void processNoContextErrorDoesNotAddErrorWhenContextExists() {
+    String cqlData = getData("/qicore_define_callstack.cql");
+    String helperCql = getData("/qicore_included_lib.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties qicoreUsing = createUsingProperties("QICore", "4.1.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(qicoreUsing);
+    doReturn(helperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    int initialExceptionCount = cqlTranslator.getExceptions().size();
+    service.processNoContextError(cqlTranslator, cqlData);
+
+    assertThat(cqlTranslator.getExceptions().size(), is(initialExceptionCount));
+  }
+
+  @Test
+  void processNoContextErrorDoesNotAddErrorWhenCqlIsBlank() {
+    String cqlData = getData("/fhir.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties fhirUsing = createUsingProperties("FHIR", "4.0.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(fhirUsing);
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    int initialExceptionCount = cqlTranslator.getExceptions().size();
+    service.processNoContextError(cqlTranslator, "");
+
+    assertThat(cqlTranslator.getExceptions().size(), is(initialExceptionCount));
+  }
+
+  @Test
+  void getLinesReturnsEmptyListForNullInput() {
+    List<Integer> lines = service.getLines(null, "start");
+
+    assertTrue(lines.isEmpty());
+  }
+
+  @Test
+  void getLinesReturnsEmptyListForEmptyInput() {
+    List<Integer> lines = service.getLines(List.of(), "start");
+
+    assertTrue(lines.isEmpty());
+  }
+
+  @Test
+  void getUsingEndLinesReturnsLinesForValidTranslator() {
+    String cqlData = getData("/fhir.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties fhirUsing = createUsingProperties("FHIR", "4.0.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(fhirUsing);
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    List<Integer> lines = service.getUsingEndLines(cqlTranslator);
+
+    assertNotNull(lines);
+  }
+
+  @Test
+  void getParameterEndLinesReturnsLinesForTranslatorWithParameters() {
+    String cqlData = getData("/qicore_define_callstack.cql");
+    String helperCql = getData("/qicore_included_lib.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties qicoreUsing = createUsingProperties("QICore", "4.1.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(qicoreUsing);
+    doReturn(helperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    List<Integer> lines = service.getParameterEndLines(cqlTranslator);
+
+    assertNotNull(lines);
+  }
+
+  @Test
+  void getValueSetsEndLinesReturnsEmptyForTranslatorWithoutValueSets() {
+    String cqlData = getData("/qicore_define_callstack.cql");
+    String helperCql = getData("/qicore_included_lib.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties qicoreUsing = createUsingProperties("QICore", "4.1.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(qicoreUsing);
+    doReturn(helperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    List<Integer> lines = service.getValueSetsEndLines(cqlTranslator);
+
+    assertNotNull(lines);
+    assertTrue(lines.isEmpty());
+  }
+
+  @Test
+  void getCodeSystemEndLinesReturnsEmptyListForTranslatorWithoutCodeSystems() {
+    String cqlData = getData("/qicore_define_callstack.cql");
+    String helperCql = getData("/qicore_included_lib.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties qicoreUsing = createUsingProperties("QICore", "4.1.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(qicoreUsing);
+    doReturn(helperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    List<Integer> lines = service.getCodeSystemEndLines(cqlTranslator);
+
+    assertNotNull(lines);
+    assertTrue(lines.isEmpty());
+  }
+
+  @Test
+  void getCodeEndLinesReturnsEmptyListForTranslatorWithoutCodes() {
+    String cqlData = getData("/qicore_define_callstack.cql");
+    String helperCql = getData("/qicore_included_lib.cql");
+    RequestData data = requestData.toBuilder().cqlData(cqlData).build();
+    UsingProperties qicoreUsing = createUsingProperties("QICore", "4.1.1");
+    lenient().when(fhirUtil.getMostSpecificFhirModel(any())).thenReturn(qicoreUsing);
+    doReturn(helperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(cqlData).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    MadieLibrarySourceProvider.setAccessToken("access token");
+
+    CqlTranslator cqlTranslator = service.processCqlData(data);
+    List<Integer> lines = service.getCodeEndLines(cqlTranslator);
+
+    assertNotNull(lines);
+    assertTrue(lines.isEmpty());
+  }
 }

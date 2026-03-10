@@ -29,6 +29,9 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 public class CqlParsingServiceTest implements ResourceFileUtil {
@@ -136,5 +139,171 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
         cqlParsingService.getCqlBuilderLookups(
             null, TOKEN, CqlCompilerException.ErrorSeverity.Info);
     assertThat(lookup, is(nullValue()));
+  }
+
+  @Test
+  void callstackContainsTestingQuantityKey() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    Map<String, Set<CQLDefinition>> definitionCallstacks =
+        cqlParsingService.getDefinitionCallstacks(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertTrue(definitionCallstacks.containsKey("Testing Quantity"));
+  }
+
+  @Test
+  void callstackExcludesDefinitionsWithNoReferences() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    Map<String, Set<CQLDefinition>> definitionCallstacks =
+        cqlParsingService.getDefinitionCallstacks(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertFalse(definitionCallstacks.containsKey("define 1"));
+  }
+
+  @Test
+  void getDefinitionCallstacksReturnsEmptyMapForCqlWithNoDefinitionReferences() {
+    String simpleCql =
+        "library SimpleLib version '0.0.001'\n"
+            + "using QICore version '4.1.1'\n"
+            + "context Patient\n"
+            + "define \"Standalone\":\n"
+            + "    true";
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(simpleCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    Map<String, Set<CQLDefinition>> definitionCallstacks =
+        cqlParsingService.getDefinitionCallstacks(
+            simpleCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertTrue(definitionCallstacks.isEmpty());
+  }
+
+  @Test
+  void getCqlBuilderLookupsReturnsFluentFunctions() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertNotNull(lookup.getFluentFunctions());
+    assertFalse(lookup.getFluentFunctions().isEmpty());
+  }
+
+  @Test
+  void getCqlBuilderLookupsReturnsFunctionsFromIncludedLibraries() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertNotNull(lookup.getFunctions());
+    assertThat(lookup.getFunctions().size(), is(2));
+  }
+
+  @Test
+  void getCqlBuilderLookupsReturnsParametersFromIncludedLibraries() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertNotNull(lookup.getParameters());
+    assertThat(lookup.getParameters().size(), is(3));
+  }
+
+  @Test
+  void getCqlBuilderLookupsReturnsDefinitionsFromIncludedLibraries() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    assertNotNull(lookup.getDefinitions());
+    assertThat(lookup.getDefinitions().size(), is(6));
+  }
+
+  @Test
+  void getCqlBuilderLookupsReturnsNullForBlankCql() {
+    CqlBuilderLookup lookup =
+        cqlParsingService.getCqlBuilderLookups(
+            "  ", TOKEN, CqlCompilerException.ErrorSeverity.Info);
+    assertThat(lookup, is(nullValue()));
+  }
+
+  @Test
+  void callstackDefinitionContainsExpectedDefinitionLogic() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    Map<String, Set<CQLDefinition>> definitionCallstacks =
+        cqlParsingService.getDefinitionCallstacks(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    Set<CQLDefinition> define2CallStack = definitionCallstacks.get("define 2");
+    assertNotNull(define2CallStack);
+    CQLDefinition define1 = define2CallStack.iterator().next();
+    assertThat(define1.getDefinitionName(), is("define 1"));
+    assertThat(define1.getDefinitionLogic(), is("define \"define 1\":\n    true"));
+  }
+
+  @Test
+  void callstackIncludesLibraryInfoForIncludedDefinitions() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    Map<String, Set<CQLDefinition>> definitionCallstacks =
+        cqlParsingService.getDefinitionCallstacks(
+            qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
+
+    Set<CQLDefinition> define4CallStack = definitionCallstacks.get("define 4");
+    assertNotNull(define4CallStack);
+    CQLDefinition helperDef =
+        define4CallStack.stream()
+            .filter(d -> "Inpatient Encounter".equals(d.getDefinitionName()))
+            .findFirst()
+            .orElse(null);
+    assertNotNull(helperDef);
+    assertThat(helperDef.getParentLibrary(), is("HelperLibrary"));
+    assertThat(helperDef.getLibraryDisplayName(), is("Helper"));
+    assertThat(helperDef.getLibraryVersion(), is("0.0.000"));
   }
 }
