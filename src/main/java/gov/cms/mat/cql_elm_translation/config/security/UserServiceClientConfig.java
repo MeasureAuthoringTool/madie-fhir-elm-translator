@@ -16,8 +16,6 @@ public class UserServiceClientConfig {
         new MappingJackson2HttpMessageConverter();
     messageConverter.setObjectMapper(objectMapper);
 
-    return new RestTemplateBuilder()
-        .additionalMessageConverters(messageConverter)
-        .build();
+    return new RestTemplateBuilder().additionalMessageConverters(messageConverter).build();
   }
 }
