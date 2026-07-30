@@ -155,6 +155,10 @@ public abstract class CqlTooling {
       ModelIdentifier modelIdentifier =
           new ModelIdentifier(usingProperties.getLibraryType(), null, usingProperties.getVersion());
       ModelManager modelManager = modelManagerFactory.getModelManager(modelIdentifier);
+      log.info(
+          "Using model manager for model [{}]: {}",
+          modelIdentifier,
+          modelManager.getGlobalCache().keySet());
       return new TranslationResource(modelManager, true);
     } else {
       return new TranslationResource(true);
