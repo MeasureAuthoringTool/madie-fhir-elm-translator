@@ -271,11 +271,10 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>gov.cms.madie</groupId>
       <artifactId>madie-translator-commons</artifactId>
-      <version>3.6.0</version>
+      <version>3.7.0</version>
     </dependency>
     <dependency>
       <groupId>gov.cms.madie</groupId>
