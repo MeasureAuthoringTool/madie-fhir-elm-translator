@@ -1,0 +1,99 @@
+{
+    "name": "madie-fhir-elm-translator",
+    "version": "1.0.0",
+    "description": "Spring Boot application to translate Clinical Quality Language (CQL) into Expression Logical Model (ELM).",
+    "longDescription": "madie-fhir-elm-translator is a backend Spring Boot service designed to translate clinical quality language (CQL) measure logic into the Expression Logical Model (ELM) format. The service is part of the MADiE ecosystem and uses shared MADiE libraries such as madie-rest-commons and madie-server-commons to support standardized translation workflows. It is built with Maven and requires authenticated access to GitHub Packages to retrieve required dependencies.",
+    "status": "Production",
+    "permissions": {
+      "licenses": [
+        {
+          "name": "CC0-1.0",
+          "URL": "https://github.com/MeasureAuthoringTool/madie-fhir-elm-translator/blob/main/LICENSE"
+        }
+      ],
+      "usageType": [
+        "openSource"
+      ],
+      "exemptionText": ""
+    },
+    "organization": "Centers for Medicare & Medicaid Services",
+    "repositoryURL": "https://github.com/MeasureAuthoringTool/madie-fhir-elm-translator",
+    "repositoryHost": "github.com/MeasureAuthoringTool",
+    "repositoryVisibility": "public",
+    "homepageURL": "",
+    "downloadURL": "",
+    "disclaimerURL": "",
+    "disclaimerText": "",
+    "vcs": "git",
+    "laborHours": 32272,
+    "reuseFrequency": {
+      "forks": 0,
+      "clones": 0
+    },
+    "platforms": [
+      "web",
+      "linux",
+      "windows",
+      "mac"
+    ],
+    "categories": [
+      "health",
+      "interoperability",
+      "data-analytics"
+    ],
+    "softwareType": "standalone/backend",
+    "languages": [
+      "Java",
+      "CQL"
+    ],
+    "maintenance": "internal",
+    "contractNumber": [
+      ""
+    ],
+    "SBOM": "",
+    "relatedCode": [],
+    "reusedCode": [
+      {
+        "name": "madie-qdm-elm-translation",
+        "URL": "https://github.com/MeasureAuthoringTool/madie-qdm-elm-translation"
+      }
+    ],
+    "partners": [],
+    "date": {
+        "created": "2022-03-03T02:41:38Z",
+        "lastModified": "2026-02-12T14:57:43Z",
+        "metadataLastUpdated": "2026-02-12T15:34:00Z"
+    },
+    "tags": [
+      "CQL",
+      "ELM",
+      "FHIR",
+      "translation",
+      "measure-authoring",
+      "MADiE",
+      "CMS"
+    ],
+    "contact": {
+        "email": "semanticbits-madie-help@icf.com",
+        "name": "MADiE Support Team"
+    },
+    "feedbackMechanism": "https://github.com/MeasureAuthoringTool/madie-fhir-elm-translator/issues",
+    "AIUseCaseID": "0",
+    "localisation": false,
+    "repositoryType": "application",
+    "userInput": true,
+    "fismaLevel": "low",
+    "group": "CCSQ",
+    "projects": [
+      "MADiE"
+    ],
+    "systems": [],
+    "subsetInHealthcare": [
+      "operational"
+    ],
+    "userType": [
+      "government"
+    ],
+    "maturityModelTier": 0
+  }
+  
