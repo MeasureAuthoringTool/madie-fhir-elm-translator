@@ -55,7 +55,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void testCallstack() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());
@@ -120,17 +120,18 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
     assertThat(definitionCallstacks.get("Testing Quantity"), contains(helperQuantity));
   }
 
+  @Test
   void testGetCqlBuilderLookups() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     CqlBuilderLookup lookup =
         cqlParsingService.getCqlBuilderLookups(
             qiCoreMeasureCql, TOKEN, CqlCompilerException.ErrorSeverity.Info);
-    assertThat(lookup.getParameters().size(), is(2));
-    assertThat(lookup.getDefinitions().size(), is(5));
-    assertThat(lookup.getFunctions().size(), is(1));
+    assertThat(lookup.getParameters().size(), is(3));
+    assertThat(lookup.getDefinitions().size(), is(6));
+    assertThat(lookup.getFunctions().size(), is(2));
     assertThat(lookup.getFluentFunctions().size(), is(1));
   }
 
@@ -146,7 +147,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void callstackContainsTestingQuantityKey() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());
@@ -196,7 +197,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void getCqlBuilderLookupsReturnsFluentFunctions() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());
@@ -212,7 +213,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void getCqlBuilderLookupsReturnsFunctionsFromIncludedLibraries() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());
@@ -228,7 +229,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void getCqlBuilderLookupsReturnsParametersFromIncludedLibraries() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());
@@ -244,7 +245,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void getCqlBuilderLookupsReturnsDefinitionsFromIncludedLibraries() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());
@@ -287,7 +288,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   void callstackIncludesLibraryInfoForIncludedDefinitions() {
     MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
     MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
-    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any());
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
     doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
     when(fhirUtil.getMostSpecificFhirModel(anyList()))
         .thenReturn(UsingProperties.builder().libraryType("QICore").build());

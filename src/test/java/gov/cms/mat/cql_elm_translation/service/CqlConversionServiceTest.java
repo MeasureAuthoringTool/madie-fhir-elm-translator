@@ -314,10 +314,10 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     }
     doReturn(supplementalDataElement)
         .when(cqlLibraryService)
-        .getLibraryCql(any(String.class), eq("4.0.000"), any(String.class));
+        .getLibraryCql(any(String.class), eq("4.0.000"), any(), any(String.class));
     doReturn(supplementalDataElement3)
         .when(cqlLibraryService)
-        .getLibraryCql(any(String.class), eq("3.0.000"), any(String.class));
+        .getLibraryCql(any(String.class), eq("3.0.000"), any(), any(String.class));
 
     String cqlData;
     inputCqlFile = new File(this.getClass().getResource("/fhir_duplicate_includes.cql").getFile());
@@ -374,7 +374,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     }
     doReturn(supplementalDataElement)
         .when(cqlLibraryService)
-        .getLibraryCql(any(String.class), any(String.class), any(String.class));
+        .getLibraryCql(any(String.class), any(String.class), any(), any(String.class));
 
     String cqlData;
     inputCqlFile =

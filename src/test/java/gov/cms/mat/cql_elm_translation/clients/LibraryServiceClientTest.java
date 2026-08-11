@@ -31,12 +31,13 @@ class LibraryServiceClientTest {
   @Mock private RestTemplate restTemplate;
 
   private LibraryServiceClient libraryServiceClient;
+  private final String LIBRARY_SERVICE_BASE_URL = "https://example.com";
 
   @BeforeEach
   void setUp() {
     libraryServiceClient = new LibraryServiceClient(restTemplate);
     ReflectionTestUtils.setField(
-        libraryServiceClient, "madieLibraryServiceBaseUrl", "http://localhost:8082/api");
+        libraryServiceClient, "madieLibraryServiceBaseUrl", LIBRARY_SERVICE_BASE_URL);
     ReflectionTestUtils.setField(
         libraryServiceClient, "libraryNamespacesUri", "/cql-libraries/namespaces");
     ReflectionTestUtils.setField(libraryServiceClient, "madieApiKey", "test-madie-api-key");
@@ -53,7 +54,7 @@ class LibraryServiceClientTest {
                 .build());
 
     when(restTemplate.exchange(
-            eq("http://localhost:8082/api/cql-libraries/namespaces"),
+            eq(LIBRARY_SERVICE_BASE_URL + "/cql-libraries/namespaces"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             any(org.springframework.core.ParameterizedTypeReference.class)))
@@ -67,7 +68,7 @@ class LibraryServiceClientTest {
     ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
     verify(restTemplate)
         .exchange(
-            eq("http://localhost:8082/api/cql-libraries/namespaces"),
+            eq(LIBRARY_SERVICE_BASE_URL + "/cql-libraries/namespaces"),
             eq(HttpMethod.GET),
             entityCaptor.capture(),
             any(org.springframework.core.ParameterizedTypeReference.class));
