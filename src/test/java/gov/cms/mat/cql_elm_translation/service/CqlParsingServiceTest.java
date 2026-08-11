@@ -38,6 +38,7 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
   @Mock private CqlLibraryService cqlLibraryService;
   @Mock ModelManagerFactory modelManagerFactory;
   @Mock FhirUtil fhirUtil;
+  @Mock NamespaceService namespaceService;
   @InjectMocks private CqlParsingService cqlParsingService;
 
   private static final String TOKEN = "John Doe";

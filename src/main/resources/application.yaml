@@ -23,6 +23,9 @@ management:
         include: "*"
 
 mat-api-key: ${MAT_API_KEY:DISABLED}
+security:
+  system-api-key: ${MADIE_SYSTEM_API_KEY:123-456-789}
+  api-key-header: ${MADIE_SYSTEM_API_KEY_HEADER:x-madie-api-key}
 
 info:
   app:
@@ -37,6 +40,8 @@ madie:
       baseUrl: ${CQL_LIBRARY_SERVICE_URL:http://localhost:8082/api}
       cql:
         uri: /cql-libraries/cql
+      namespaces:
+        uri: ${CQL_LIBRARY_NAMESPACE_URL:/cql-libraries/namespaces}
 
 springdoc:
   swagger-ui:
@@ -44,7 +49,7 @@ springdoc:
 
 logging:
   level:
-    root: ${LOG_LEVEL:DEBUG}
+    root: ${LOG_LEVEL:INFO}
   pattern:
     console: "%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %mdc %-5level %logger{36}.%M - %msg%n"
 
