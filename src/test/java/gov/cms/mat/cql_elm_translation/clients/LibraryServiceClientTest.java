@@ -80,7 +80,7 @@ class LibraryServiceClientTest {
 
   @Test
   void getNamespacesReturnsEmptyListOnError() {
-    doThrow(new RuntimeException("boom"))
+    doThrow(new RuntimeException("Error"))
         .when(restTemplate)
         .exchange(
             any(String.class),
