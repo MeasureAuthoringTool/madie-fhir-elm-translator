@@ -32,16 +32,18 @@ class LibraryServiceClientTest {
 
   private LibraryServiceClient libraryServiceClient;
   private final String LIBRARY_SERVICE_BASE_URL = "https://example.com";
+  private final String NAMESPACE_URL = "/cql-libraries/namespaces";
+  private final String API_KEY = "test-madie-api-key";
+  private final String API_KEY_HEADER = "custom header";
 
   @BeforeEach
   void setUp() {
     libraryServiceClient = new LibraryServiceClient(restTemplate);
     ReflectionTestUtils.setField(
         libraryServiceClient, "madieLibraryServiceBaseUrl", LIBRARY_SERVICE_BASE_URL);
-    ReflectionTestUtils.setField(
-        libraryServiceClient, "libraryNamespacesUri", "/cql-libraries/namespaces");
-    ReflectionTestUtils.setField(libraryServiceClient, "madieApiKey", "test-madie-api-key");
-    ReflectionTestUtils.setField(libraryServiceClient, "madieApiKeyHeader", "x-madie-api-key");
+    ReflectionTestUtils.setField(libraryServiceClient, "libraryNamespacesUri", NAMESPACE_URL);
+    ReflectionTestUtils.setField(libraryServiceClient, "madieApiKey", API_KEY);
+    ReflectionTestUtils.setField(libraryServiceClient, "madieApiKeyHeader", API_KEY_HEADER);
   }
 
   @Test
@@ -54,7 +56,7 @@ class LibraryServiceClientTest {
                 .build());
 
     when(restTemplate.exchange(
-            eq(LIBRARY_SERVICE_BASE_URL + "/cql-libraries/namespaces"),
+            eq(LIBRARY_SERVICE_BASE_URL + NAMESPACE_URL),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             any(org.springframework.core.ParameterizedTypeReference.class)))
@@ -68,12 +70,12 @@ class LibraryServiceClientTest {
     ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
     verify(restTemplate)
         .exchange(
-            eq(LIBRARY_SERVICE_BASE_URL + "/cql-libraries/namespaces"),
+            eq(LIBRARY_SERVICE_BASE_URL + NAMESPACE_URL),
             eq(HttpMethod.GET),
             entityCaptor.capture(),
             any(org.springframework.core.ParameterizedTypeReference.class));
     HttpHeaders headers = entityCaptor.getValue().getHeaders();
-    assertEquals("test-madie-api-key", headers.getFirst("x-madie-api-key"));
+    assertEquals(API_KEY, headers.getFirst(API_KEY_HEADER));
   }
 
   @Test
