@@ -63,4 +63,22 @@ class NamespaceServiceTest {
 
     verify(namespaceManager, never()).ensureNamespaceRegistered(org.mockito.ArgumentMatchers.any());
   }
+
+  @Test
+  void registerNamespacesRetriesLoadingWhenCacheIsEmpty() {
+    when(libraryServiceClient.getNamespaces())
+        .thenReturn(
+            List.of(
+                NamespaceDto.builder()
+                    .namespaceCanonical("http://hl7.org/fhir/us/qicore")
+                    .namespacePrefix("hl7.fhir.us.qicore")
+                    .build()));
+
+    NamespaceManager namespaceManager = org.mockito.Mockito.mock(NamespaceManager.class);
+    namespaceService.registerNamespaces(namespaceManager);
+
+    verify(libraryServiceClient, times(1)).getNamespaces();
+    verify(namespaceManager, times(1))
+        .ensureNamespaceRegistered(org.mockito.ArgumentMatchers.any());
+  }
 }

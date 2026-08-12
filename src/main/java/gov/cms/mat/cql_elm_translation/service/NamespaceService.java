@@ -33,8 +33,14 @@ public class NamespaceService {
   }
 
   public void registerNamespaces(NamespaceManager namespaceManager) {
-    if (namespaceManager == null || namespaceInfos.isEmpty()) {
+    if (namespaceManager == null) {
       return;
+    }
+    // there is a possibility of cql library service being down or rebooting during deployment while
+    // translator is being
+    // rebooted. Make sure to reattempt the namespace loading
+    if (namespaceInfos.isEmpty()) {
+      loadNamespaces();
     }
 
     namespaceInfos.forEach(namespaceManager::ensureNamespaceRegistered);
