@@ -14,7 +14,7 @@
   <description>Translates CQL to ELM for MADiE</description>
 
   <properties>
-    <cqframework.version>5.0.0</cqframework.version>
+    <cqframework.version>5.1.0</cqframework.version>
     <hapi.fhir.version>8.10.1</hapi.fhir.version>
     <java.version>17</java.version>
     <mvn.checkstyle.file>madie-checkstyle.xml</mvn.checkstyle.file>
