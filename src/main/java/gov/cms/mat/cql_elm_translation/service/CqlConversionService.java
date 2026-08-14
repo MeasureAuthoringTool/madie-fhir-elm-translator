@@ -55,8 +55,11 @@ public class CqlConversionService extends CqlTooling {
 
   private static final String LOG_MESSAGE_TEMPLATE = "ErrorSeverity: %s, Message: %s";
 
-  public CqlConversionService(ModelManagerFactory modelManagerFactory, FhirUtil fhirUtil) {
-    super(modelManagerFactory, fhirUtil);
+  public CqlConversionService(
+      ModelManagerFactory modelManagerFactory,
+      FhirUtil fhirUtil,
+      NamespaceService namespaceService) {
+    super(modelManagerFactory, fhirUtil, namespaceService);
   }
 
   public CqlConversionPayload translateCqlToElm(RequestData requestData, boolean checkContext) {

@@ -35,6 +35,8 @@ class CqlConversionServicePropertyTest implements ResourceFileUtil {
 
   @Mock FhirUtil fhirUtil;
 
+  @Mock NamespaceService namespaceService;
+
   @InjectMocks CqlConversionService cqlConversionService;
 
   String cqlData;

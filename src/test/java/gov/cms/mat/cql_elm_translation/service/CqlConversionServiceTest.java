@@ -54,6 +54,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import org.cqframework.cql.cql2elm.ModelManager;
 import org.hl7.cql.model.ModelIdentifier;
 import gov.cms.mat.cql.elements.UsingProperties;
@@ -67,6 +68,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
   @Mock private CqlLibraryService cqlLibraryService;
   @Mock private FhirUtil fhirUtil;
   @Mock private ModelManagerFactory modelManagerFactory;
+  @Mock private NamespaceService namespaceService;
   @Mock private NamespaceManager namespaceManager;
   @InjectMocks private CqlConversionService service;
 
@@ -169,6 +171,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     // then
     assertNotNull(result);
     assertThat(result.getLibraryManager(), is(notNullValue()));
+    verify(namespaceService).registerNamespaces(namespaceManager);
   }
 
   @Test
@@ -185,6 +188,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     // then
     assertNotNull(result);
     assertThat(result.getLibraryManager(), is(notNullValue()));
+    verify(namespaceService).registerNamespaces(any());
   }
 
   @Test
@@ -310,10 +314,10 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     }
     doReturn(supplementalDataElement)
         .when(cqlLibraryService)
-        .getLibraryCql(any(String.class), eq("4.0.000"), any(String.class));
+        .getLibraryCql(any(String.class), eq("4.0.000"), any(), any(String.class));
     doReturn(supplementalDataElement3)
         .when(cqlLibraryService)
-        .getLibraryCql(any(String.class), eq("3.0.000"), any(String.class));
+        .getLibraryCql(any(String.class), eq("3.0.000"), any(), any(String.class));
 
     String cqlData;
     inputCqlFile = new File(this.getClass().getResource("/fhir_duplicate_includes.cql").getFile());
@@ -370,7 +374,7 @@ class CqlConversionServiceTest implements ResourceFileUtil {
     }
     doReturn(supplementalDataElement)
         .when(cqlLibraryService)
-        .getLibraryCql(any(String.class), any(String.class), any(String.class));
+        .getLibraryCql(any(String.class), any(String.class), any(), any(String.class));
 
     String cqlData;
     inputCqlFile =

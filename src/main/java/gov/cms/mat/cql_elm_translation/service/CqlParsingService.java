@@ -30,8 +30,9 @@ public class CqlParsingService extends CqlTooling {
   public CqlParsingService(
       ModelManagerFactory modelManagerFactory,
       FhirUtil fhirUtil,
+      NamespaceService namespaceService,
       CqlLibraryService cqlLibraryService) {
-    super(modelManagerFactory, fhirUtil);
+    super(modelManagerFactory, fhirUtil, namespaceService);
     this.cqlLibraryService = cqlLibraryService;
   }
 
@@ -39,7 +40,7 @@ public class CqlParsingService extends CqlTooling {
    * Parses the CQL and collect all CQL building blocks irrespective of used or unused(including for
    * the CQL of the included Libraries)
    *
-   * @param cql- measure cql
+   * @param cql - measure cql
    * @param accessToken Requesting User's Okta Bearer token
    * @return CqlBuilderLookup -> building blocks for CQL Definition UI builder
    */
