@@ -79,6 +79,43 @@ class LibraryServiceClientTest {
   }
 
   @Test
+  void getNamespacesReturnsEmptyListWhenBodyIsNull() {
+    when(restTemplate.exchange(
+            eq(LIBRARY_SERVICE_BASE_URL + NAMESPACE_URL),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            any(org.springframework.core.ParameterizedTypeReference.class)))
+        .thenReturn(ResponseEntity.status(HttpStatus.OK).body(null));
+
+    List<NamespaceDto> actual = libraryServiceClient.getNamespaces();
+
+    assertTrue(actual.isEmpty());
+  }
+
+  @Test
+  void getNamespacesDoesNotSetApiKeyHeaderWhenApiKeyMissing() {
+    ReflectionTestUtils.setField(libraryServiceClient, "madieApiKey", " ");
+    when(restTemplate.exchange(
+            eq(LIBRARY_SERVICE_BASE_URL + NAMESPACE_URL),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            any(org.springframework.core.ParameterizedTypeReference.class)))
+        .thenReturn(new ResponseEntity<>(List.of(), HttpStatus.OK));
+
+    libraryServiceClient.getNamespaces();
+
+    ArgumentCaptor<HttpEntity> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+    verify(restTemplate)
+        .exchange(
+            eq(LIBRARY_SERVICE_BASE_URL + NAMESPACE_URL),
+            eq(HttpMethod.GET),
+            entityCaptor.capture(),
+            any(org.springframework.core.ParameterizedTypeReference.class));
+    HttpHeaders headers = entityCaptor.getValue().getHeaders();
+    assertTrue(headers.get(API_KEY_HEADER) == null || headers.get(API_KEY_HEADER).isEmpty());
+  }
+
+  @Test
   void getNamespacesReturnsEmptyListOnError() {
     doThrow(new RuntimeException("Error"))
         .when(restTemplate)
