@@ -9,6 +9,7 @@ import org.hl7.cql.model.NamespaceInfo;
 import org.hl7.cql.model.NamespaceManager;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -24,6 +25,7 @@ public class NamespaceService {
   private volatile List<NamespaceInfo> namespaceInfos = Collections.emptyList();
 
   @EventListener(ApplicationReadyEvent.class)
+  @Scheduled(cron = "${madie.library.service.namespace-refresh-cron:@hourly}")
   public void loadNamespaces() {
     namespaceInfos =
         libraryServiceClient.getNamespaces().stream()
