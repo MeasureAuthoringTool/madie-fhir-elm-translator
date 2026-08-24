@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -44,6 +45,19 @@ public class NamespaceService {
     }
 
     namespaceInfos.forEach(namespaceManager::ensureNamespaceRegistered);
+  }
+
+  public NamespaceInfo getNamespaceInfo(String namespaceCanonical) {
+    if (StringUtils.isBlank(namespaceCanonical)) {
+      return null;
+    }
+    if (namespaceInfos.isEmpty()) {
+      loadNamespaces();
+    }
+    return namespaceInfos.stream()
+        .filter(namespaceInfo -> Objects.equals(namespaceCanonical, namespaceInfo.getUri()))
+        .findFirst()
+        .orElse(null);
   }
 
   private boolean isValidNamespace(NamespaceDto dto) {
