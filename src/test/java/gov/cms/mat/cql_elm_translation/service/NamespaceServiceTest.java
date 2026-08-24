@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -132,5 +133,46 @@ class NamespaceServiceTest {
     verify(firstManager, times(2)).ensureNamespaceRegistered(any());
     verify(secondManager, times(2)).ensureNamespaceRegistered(any());
     verify(firstManager, never()).ensureNamespaceRegistered(null);
+  }
+
+  @Test
+  void getNamespaceInfoReturnsLoadedNamespaceForCanonicalUrl() {
+    // given
+    String namespaceCanonical = "http://hl7.org/fhir/us/qicore";
+    when(libraryServiceClient.getNamespaces())
+        .thenReturn(
+            List.of(
+                NamespaceDto.builder()
+                    .namespaceCanonical(namespaceCanonical)
+                    .namespacePrefix("hl7.fhir.us.qicore")
+                    .build()));
+    namespaceService.loadNamespaces();
+
+    // when
+    NamespaceInfo namespaceInfo = namespaceService.getNamespaceInfo(namespaceCanonical);
+
+    // then
+    assertEquals("hl7.fhir.us.qicore", namespaceInfo.getName());
+    assertEquals(namespaceCanonical, namespaceInfo.getUri());
+  }
+
+  @Test
+  void getNamespaceInfoReturnsNullForUnknownCanonicalUrl() {
+    // given
+    when(libraryServiceClient.getNamespaces())
+        .thenReturn(
+            List.of(
+                NamespaceDto.builder()
+                    .namespaceCanonical("http://hl7.org/fhir/us/qicore")
+                    .namespacePrefix("hl7.fhir.us.qicore")
+                    .build()));
+    namespaceService.loadNamespaces();
+
+    // when
+    NamespaceInfo namespaceInfo =
+        namespaceService.getNamespaceInfo("http://example.com/unknown-namespace");
+
+    // then
+    assertNull(namespaceInfo);
   }
 }

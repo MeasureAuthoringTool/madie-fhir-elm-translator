@@ -6,6 +6,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.cql_elm_translation.service.CqlConversionService;
+import gov.cms.mat.cql_elm_translation.service.NamespaceService;
 import gov.cms.madie.cql_elm_translator.utils.cql.data.RequestData;
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/cql/translator")
@@ -32,6 +34,7 @@ public class CqlConversionController {
 
   private final CqlConversionService cqlConversionService;
   private final CqlLibraryService cqlLibraryService;
+  private final NamespaceService namespaceService;
 
   /**
    * Input Params errorSeverity - Info includes Info, Warnings and Errors errorSeverity - Warning
@@ -59,6 +62,8 @@ public class CqlConversionController {
       @RequestParam(value = "validate-units", defaultValue = "true") Boolean validateUnits,
       @RequestParam(value = "result-types", defaultValue = "true") Boolean resultTypes,
       @RequestParam(value = "checkContext", defaultValue = "false") Boolean checkContext,
+      @RequestParam(value = "namespaceCanonical", required = false)
+          Optional<String> namespaceCanonical,
       @RequestHeader("Authorization") String accessToken) {
 
     RequestData requestData =
@@ -73,6 +78,7 @@ public class CqlConversionController {
             .disableMethodInvocation(disableMethodInvocation)
             .validateUnits(validateUnits)
             .resultTypes(resultTypes)
+            .nsInfo(namespaceService.getNamespaceInfo(namespaceCanonical.orElse(null)))
             .build();
     cqlLibraryService.setUpLibrarySourceProvider(cqlData, accessToken);
 

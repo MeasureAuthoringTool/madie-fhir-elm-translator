@@ -3,18 +3,22 @@ package gov.cms.mat.cql_elm_translation.controllers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 
 import java.io.UncheckedIOException;
+import java.util.Optional;
 
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 import org.cqframework.cql.cql2elm.CqlCompilerException;
+import org.hl7.cql.model.NamespaceInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,6 +28,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import gov.cms.mat.cql.dto.CqlConversionPayload;
 import gov.cms.mat.cql_elm_translation.ResourceFileUtil;
+import gov.cms.mat.cql_elm_translation.service.NamespaceService;
 import gov.cms.madie.cql_elm_translator.utils.cql.data.RequestData;
 import gov.cms.mat.cql_elm_translation.service.CqlConversionService;
 
@@ -33,16 +38,22 @@ class CqlConversionControllerTest implements ResourceFileUtil {
 
   @Mock private CqlConversionService cqlConversionService;
   @Mock private CqlLibraryService cqlLibraryService;
+  @Mock private NamespaceService namespaceService;
   @InjectMocks private CqlConversionController cqlConversionController;
 
   @Test
   void cqlToElmJson() {
+    // given
     String cqlData = getData("/cv_populations.cql");
     String result = getData("/cv_populations.json");
+    String namespaceCanonical = "http://hl7.org/fhir/us/qicore";
+    NamespaceInfo namespaceInfo = new NamespaceInfo("hl7.fhir.us.qicore", namespaceCanonical);
     CqlConversionPayload payload = CqlConversionPayload.builder().json(result).build();
+    Mockito.when(namespaceService.getNamespaceInfo(namespaceCanonical)).thenReturn(namespaceInfo);
     Mockito.when(cqlConversionService.translateCqlToElm(any(RequestData.class), anyBoolean()))
         .thenReturn(payload);
 
+    // when
     CqlConversionPayload cqlConversionPayload =
         cqlConversionController.cqlToElmJson(
             cqlData,
@@ -56,10 +67,15 @@ class CqlConversionControllerTest implements ResourceFileUtil {
             true,
             true,
             true,
+            Optional.of(namespaceCanonical),
             "test");
 
+    // then
     assertEquals(result, cqlConversionPayload.getJson());
-    Mockito.verify(cqlConversionService).translateCqlToElm(any(), anyBoolean());
+    ArgumentCaptor<RequestData> requestDataCaptor = ArgumentCaptor.forClass(RequestData.class);
+    Mockito.verify(cqlConversionService)
+        .translateCqlToElm(requestDataCaptor.capture(), anyBoolean());
+    assertSame(namespaceInfo, requestDataCaptor.getValue().getNsInfo());
   }
 
   @Test
