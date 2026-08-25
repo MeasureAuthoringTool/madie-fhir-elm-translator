@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -34,6 +35,7 @@ import java.util.TimeZone;
 @Slf4j
 @Import({CqlLibraryService.class, FhirUtil.class})
 @EnableCaching
+@EnableScheduling
 public class CqlElmTranslationApplication {
 
   public static void main(String[] args) {

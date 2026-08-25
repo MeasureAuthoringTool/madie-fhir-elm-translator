@@ -42,6 +42,7 @@ madie:
         uri: /cql-libraries/cql
       namespaces:
         uri: ${CQL_LIBRARY_NAMESPACE_URL:/cql-libraries/namespaces}
+      namespace-refresh-cron: ${NAMESPACE_REFRESH_TIME:@hourly}
 
 springdoc:
   swagger-ui:
