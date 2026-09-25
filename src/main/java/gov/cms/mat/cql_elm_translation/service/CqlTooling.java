@@ -33,7 +33,6 @@ public abstract class CqlTooling {
   private final ModelManagerFactory modelManagerFactory;
   private final FhirUtil fhirUtil;
   private final NamespaceService namespaceService;
-  private static final String MIN_FHIR_VERSION = "7.0.0";
 
   protected CQLTools parseCql(
       String cql,
