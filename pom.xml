@@ -15,7 +15,7 @@
 
   <properties>
     <cqframework.version>5.3.0</cqframework.version>
-    <hapi.fhir.version>8.10.1</hapi.fhir.version>
+    <hapi.fhir.version>8.12.1</hapi.fhir.version>
     <java.version>17</java.version>
     <mvn.checkstyle.file>madie-checkstyle.xml</mvn.checkstyle.file>
     <mvn.checkstyle.version>3.1.2</mvn.checkstyle.version>
@@ -274,12 +274,12 @@
     <dependency>
       <groupId>gov.cms.madie</groupId>
       <artifactId>madie-translator-commons</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.1</version>
     </dependency>
     <dependency>
       <groupId>gov.cms.madie</groupId>
       <artifactId>madie-rest-commons</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
