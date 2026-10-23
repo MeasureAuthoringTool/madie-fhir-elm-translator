@@ -7,11 +7,16 @@ import gov.cms.mat.cql_elm_translation.ResourceFileUtil;
 import gov.cms.madie.cql_elm_translator.utils.cql.cql_translator.MadieLibrarySourceProvider;
 import gov.cms.madie.cql_elm_translator.dto.CqlBuilderLookup;
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
+import gov.cms.madie.cql_elm_translator.utils.cql.CQLTools;
 import gov.cms.madie.cql_elm_translator.utils.cql.parsing.model.CQLDefinition;
+import kotlinx.io.Buffer;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import org.cqframework.cql.cql2elm.CqlCompilerException;
+import org.cqframework.cql.cql2elm.model.CompiledLibrary;
+import org.hl7.elm.r1.Library;
+import org.hl7.elm.r1.VersionedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +32,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasKey;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -307,5 +314,75 @@ public class CqlParsingServiceTest implements ResourceFileUtil {
     assertThat(helperDef.getParentLibrary(), is("HelperLibrary"));
     assertThat(helperDef.getLibraryDisplayName(), is("Helper"));
     assertThat(helperDef.getLibraryVersion(), is("0.0.000"));
+  }
+
+  @Test
+  void parseCqlKeysLibrariesWithoutNamespaceById() {
+    MadieLibrarySourceProvider.setUsing(new CqlTextParser(qiCoreMeasureCql).getUsing());
+    MadieLibrarySourceProvider.setCqlLibraryService(cqlLibraryService);
+    doReturn(qiCoreHelperCql).when(cqlLibraryService).getLibraryCql(any(), any(), any(), any());
+    doNothing().when(cqlLibraryService).setUpLibrarySourceProvider(anyString(), anyString());
+    when(fhirUtil.getMostSpecificFhirModel(anyList()))
+        .thenReturn(UsingProperties.builder().libraryType("QICore").build());
+    CQLTools cqlTools =
+        cqlParsingService.parseCql(
+            qiCoreMeasureCql,
+            TOKEN,
+            cqlLibraryService,
+            null,
+            CqlCompilerException.ErrorSeverity.Info);
+
+    assertThat(cqlTools.getCompiledLibraryMap(), hasKey("HelperLibrary"));
+    assertThat(cqlTools.getChildrenLibraries(), hasKey("HelperLibrary-0.0.000"));
+    assertThat(cqlTools.getChildrenLibraries().get("HelperLibrary-0.0.000"), is(qiCoreHelperCql));
+  }
+
+  @Test
+  void getIncludedLibrariesCqlKeysLibraryWithoutSystemByIdAndVersion() {
+    VersionedIdentifier identifier =
+        new VersionedIdentifier().withId("HelperLibrary").withVersion("0.0.000");
+    MadieLibrarySourceProvider librarySourceProvider = mock(MadieLibrarySourceProvider.class);
+    when(librarySourceProvider.getLibrarySource(identifier)).thenReturn(toSource(qiCoreHelperCql));
+
+    Map<String, String> includedLibrariesCql =
+        cqlParsingService.getIncludedLibrariesCql(
+            librarySourceProvider, Map.of(identifier, buildCompiledLibrary(identifier)));
+
+    assertThat(includedLibrariesCql.size(), is(1));
+    assertThat(includedLibrariesCql.get("HelperLibrary-0.0.000"), is(qiCoreHelperCql));
+  }
+
+  @Test
+  void getIncludedLibrariesCqlKeysNamespacedLibraryBySystemIdAndVersion() {
+    VersionedIdentifier identifier =
+        new VersionedIdentifier()
+            .withSystem("http://ecqi.healthit.gov/ecqms")
+            .withId("HelperLibrary")
+            .withVersion("0.0.000");
+    MadieLibrarySourceProvider librarySourceProvider = mock(MadieLibrarySourceProvider.class);
+    when(librarySourceProvider.getLibrarySource(identifier)).thenReturn(toSource(qiCoreHelperCql));
+
+    Map<String, String> includedLibrariesCql =
+        cqlParsingService.getIncludedLibrariesCql(
+            librarySourceProvider, Map.of(identifier, buildCompiledLibrary(identifier)));
+
+    assertThat(includedLibrariesCql.size(), is(1));
+    assertThat(
+        includedLibrariesCql.get("http://ecqi.healthit.gov/ecqms/HelperLibrary-0.0.000"),
+        is(qiCoreHelperCql));
+  }
+
+  private CompiledLibrary buildCompiledLibrary(VersionedIdentifier identifier) {
+    CompiledLibrary compiledLibrary = new CompiledLibrary();
+    compiledLibrary.setIdentifier(identifier);
+    compiledLibrary.setLibrary(new Library().withIdentifier(identifier));
+    return compiledLibrary;
+  }
+
+  private Buffer toSource(String cql) {
+    byte[] bytes = cql.getBytes(StandardCharsets.UTF_8);
+    Buffer buffer = new Buffer();
+    buffer.write(bytes, 0, bytes.length);
+    return buffer;
   }
 }

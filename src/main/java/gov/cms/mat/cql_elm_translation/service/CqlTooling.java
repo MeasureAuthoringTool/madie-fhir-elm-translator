@@ -48,7 +48,7 @@ public abstract class CqlTooling {
     translationResource
         .getLibraryManager()
         .getCompiledLibraries()
-        .forEach((key, value) -> translatedLibraries.put(key.getId(), value));
+        .forEach((key, value) -> translatedLibraries.put(getQualifiedLibraryName(key), value));
     // if no parentExpressions provided, consider all expressions from main CQL
     Set<String> topLevelExpressions;
     if (CollectionUtils.isEmpty(parentExpressions)) {
@@ -92,12 +92,19 @@ public abstract class CqlTooling {
         }
 
         includedLibrariesCql.putIfAbsent(
-            l.getIdentifier().getId() + "-" + l.getIdentifier().getVersion(), libraryCql);
+            getQualifiedLibraryName(l.getIdentifier()) + "-" + l.getIdentifier().getVersion(),
+            libraryCql);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
     return includedLibrariesCql;
+  }
+
+  private String getQualifiedLibraryName(VersionedIdentifier identifier) {
+    return identifier.getSystem() == null
+        ? identifier.getId()
+        : identifier.getSystem() + "/" + identifier.getId();
   }
 
   private String readSourceToString(Source source) throws IOException {
