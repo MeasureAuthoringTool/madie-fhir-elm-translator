@@ -4,18 +4,16 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import gov.cms.madie.cql_elm_translator.dto.CqlLibraryDetails;
 import gov.cms.madie.cql_elm_translator.utils.cql.data.RequestData;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.cqframework.cql.cql2elm.*;
 import org.cqframework.cql.cql2elm.model.CompiledLibrary;
 import org.cqframework.cql.elm.requirements.fhir.DataRequirementsProcessor;
-import org.hl7.elm.r1.ExpressionDef;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import gov.cms.madie.cql_elm_translator.service.CqlLibraryService;
 
-import java.util.stream.Collectors;
 
 import static org.cqframework.cql.elm.requirements.fhir.utilities.SpecificationLevel.US_QM_STU5;
 
@@ -43,8 +41,8 @@ public class EffectiveDataRequirementService {
 
   /**
    * @param libraryDetails - instance of CqlLibraryDetails
-   * @param recursive- indicates if the data requirements gathered should be recursive
-   * @param accessToken- used by MadieLibrarySourceProvider to make calls to cql-library-services
+   * @param recursive - indicates if the data requirements gathered should be recursive
+   * @param accessToken - used by MadieLibrarySourceProvider to make calls to cql-library-services
    * @return effective data requirement of type R5 library
    */
   @Cacheable(
@@ -54,7 +52,7 @@ public class EffectiveDataRequirementService {
               + "(#libraryDetails.expressions != null ? "
               + "#libraryDetails.expressions.hashCode() : 'null')")
   public org.hl7.fhir.r5.model.Library getEffectiveDataRequirements(
-      CqlLibraryDetails libraryDetails, boolean recursive, String accessToken) {
+      @NonNull CqlLibraryDetails libraryDetails, boolean recursive, String accessToken) {
 
     // setting up the librarySourceProvider to fetch included libraries
     cqlLibraryService.setUpLibrarySourceProvider(libraryDetails.getCql(), accessToken);
@@ -73,15 +71,6 @@ public class EffectiveDataRequirementService {
     CqlCompilerOptions options = CqlCompilerOptions.defaultOptions();
     options.setCollapseDataRequirements(true); // removing duplicate data requirements
     options.setSignatureLevel(LibraryBuilder.SignatureLevel.Overloads);
-
-    // null indicates Included Library, pass all CQL Definitions to DataRequirementsProcessor
-    if (libraryDetails.getExpressions() == null) {
-      libraryDetails.setExpressions(
-          translatedLibrary.getLibrary().getStatements().getDef().stream()
-              .map(ExpressionDef::getName)
-              .filter(defName -> !StringUtils.equalsIgnoreCase(defName, "patient"))
-              .collect(Collectors.toSet()));
-    }
 
     org.hl7.fhir.r5.model.Library effectiveDataRequirements =
         dqReqTrans.gatherDataRequirements(
