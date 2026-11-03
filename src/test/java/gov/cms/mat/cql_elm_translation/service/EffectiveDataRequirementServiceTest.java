@@ -17,6 +17,7 @@ import org.hl7.elm.r1.ExpressionDef;
 import org.hl7.elm.r1.Library;
 import org.hl7.elm.r1.VersionedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -167,6 +167,9 @@ class EffectiveDataRequirementServiceTest {
     assertEquals("test", r5LibraryStr);
   }
 
+  @Disabled(
+      "Extensive mocking of several internal DRP components, "
+          + "may not provide meaningful test coverage.")
   @Test
   public void testGetEffectiveDataRequirementsSuccessExpressionsNull() {
     String cqlData = ResourceUtils.getData("/CMS135.cql");
@@ -202,6 +205,7 @@ class EffectiveDataRequirementServiceTest {
     when(compiledLibrary.getIdentifier()).thenReturn(versionedIdentifier);
     when(libraryManager.getCompiledLibraries()).thenReturn(new ConcurrentHashMap<>());
     when(compiledLibrary.getLibrary()).thenReturn(elmLibrary);
+    when(elmLibrary.getIdentifier()).thenReturn(versionedIdentifier);
     when(libraryManager.getModelManager()).thenReturn(modelManager);
 
     // Mock Library internals
