@@ -60,7 +60,7 @@ public class CqlElmTranslationApplication {
   public CacheManager cacheManager() {
     CaffeineCacheManager cacheManager =
         new CaffeineCacheManager("cqlLibraries", "effectiveDataRequirementsCache");
-    cacheManager.setCaffeine(Caffeine.newBuilder().maximumSize(500));
+    cacheManager.setCaffeine(Caffeine.newBuilder().maximumSize(500).recordStats());
     return cacheManager;
   }
 
