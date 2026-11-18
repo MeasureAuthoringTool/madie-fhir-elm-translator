@@ -17,6 +17,10 @@ management:
   endpoint:
     health:
       show-details: always
+    env:
+      enabled: false
+    loggers:
+      access: none
   endpoints:
     web:
       exposure:
@@ -46,6 +50,7 @@ madie:
 
 springdoc:
   swagger-ui:
+    enabled: false
     path: /swagger
 
 logging:
